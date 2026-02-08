@@ -5,13 +5,26 @@ import { ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { ProductCategory } from '@/types/database';
 
+// Import category images
+import kitchenCountertopsImg from '@/assets/categories/kitchen-countertops.jpg';
+import flooringImg from '@/assets/categories/flooring.jpg';
+import bathroomImg from '@/assets/categories/bathroom.jpg';
+import staircasesImg from '@/assets/categories/staircases.jpg';
+
+const categoryImages: Record<string, string> = {
+  'kitchen-countertops': kitchenCountertopsImg,
+  'flooring': flooringImg,
+  'bathroom': bathroomImg,
+  'staircases': staircasesImg,
+  'wall-cladding': bathroomImg,
+};
+
 const categoryIcons: Record<string, string> = {
-  countertops: '🏠',
-  flooring: '🏢',
-  kitchen: '🍳',
-  bathroom: '🚿',
-  staircases: '📐',
-  monuments: '🏛️',
+  'kitchen-countertops': '🍳',
+  'flooring': '🏢',
+  'bathroom': '🚿',
+  'staircases': '📐',
+  'wall-cladding': '🧱',
 };
 
 export function CategoriesSection() {
@@ -33,14 +46,19 @@ export function CategoriesSection() {
     } else {
       // Fallback categories
       setCategories([
-        { id: '1', name: 'Countertops', slug: 'countertops', description: 'Kitchen & bathroom countertops', image_url: null, is_active: true, created_at: '', updated_at: '' },
+        { id: '1', name: 'Kitchen Countertops', slug: 'kitchen-countertops', description: 'Premium kitchen countertops', image_url: null, is_active: true, created_at: '', updated_at: '' },
         { id: '2', name: 'Flooring', slug: 'flooring', description: 'Premium stone flooring', image_url: null, is_active: true, created_at: '', updated_at: '' },
-        { id: '3', name: 'Kitchen Slabs', slug: 'kitchen', description: 'Durable kitchen slabs', image_url: null, is_active: true, created_at: '', updated_at: '' },
-        { id: '4', name: 'Bathroom', slug: 'bathroom', description: 'Elegant bathroom solutions', image_url: null, is_active: true, created_at: '', updated_at: '' },
-        { id: '5', name: 'Staircases', slug: 'staircases', description: 'Grand staircase designs', image_url: null, is_active: true, created_at: '', updated_at: '' },
-        { id: '6', name: 'Monuments', slug: 'monuments', description: 'Memorial monuments', image_url: null, is_active: true, created_at: '', updated_at: '' },
+        { id: '3', name: 'Bathroom', slug: 'bathroom', description: 'Elegant bathroom solutions', image_url: null, is_active: true, created_at: '', updated_at: '' },
+        { id: '4', name: 'Staircases', slug: 'staircases', description: 'Grand staircase designs', image_url: null, is_active: true, created_at: '', updated_at: '' },
       ]);
     }
+  };
+
+  const getCategoryImage = (category: ProductCategory) => {
+    if (category.image_url && category.image_url !== '/placeholder.svg') {
+      return category.image_url;
+    }
+    return categoryImages[category.slug] || kitchenCountertopsImg;
   };
 
   return (
@@ -62,7 +80,7 @@ export function CategoriesSection() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {categories.map((category, index) => (
             <motion.div
               key={category.id}
@@ -73,17 +91,27 @@ export function CategoriesSection() {
             >
               <Link
                 to={`/products?category=${category.slug}`}
-                className="group block p-6 bg-card rounded-xl border border-border hover:border-primary/50 hover:shadow-lg transition-all text-center"
+                className="group block overflow-hidden rounded-xl border border-border hover:border-primary/50 hover:shadow-lg transition-all"
               >
-                <div className="text-4xl mb-4">
-                  {categoryIcons[category.slug] || '🪨'}
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <img
+                    src={getCategoryImage(category)}
+                    alt={category.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <div className="text-2xl mb-1">
+                      {categoryIcons[category.slug] || '🪨'}
+                    </div>
+                    <h3 className="font-semibold text-white group-hover:text-primary transition-colors">
+                      {category.name}
+                    </h3>
+                    <p className="text-xs text-white/80 mt-1 line-clamp-2">
+                      {category.description}
+                    </p>
+                  </div>
                 </div>
-                <h3 className="font-semibold group-hover:text-primary transition-colors">
-                  {category.name}
-                </h3>
-                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                  {category.description}
-                </p>
               </Link>
             </motion.div>
           ))}
