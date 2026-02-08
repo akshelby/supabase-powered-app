@@ -279,10 +279,15 @@ export type Database = {
         Row: {
           additional_notes: string | null
           admin_notes: string | null
+          approximate_length: string | null
+          approximate_width: string | null
+          assigned_to: string | null
           budget_range: string | null
           completion_urgency: string | null
           created_at: string
+          cutouts_required: string[] | null
           drawing_data: string | null
+          edge_profile_preference: string | null
           email: string | null
           estimated_amount: number | null
           expected_start_date: string | null
@@ -292,26 +297,36 @@ export type Database = {
           id: string
           kitchen_type: string | null
           mobile_number: string
+          number_of_counters: number | null
           preferred_color: string | null
           project_location: string | null
           project_nature: string | null
+          project_type_other: string | null
           project_types: string[] | null
           quantity: string | null
           reference_images: string[] | null
           status: string
           stone_type: string | null
           thickness: string | null
+          tile_size_preference: string | null
+          total_flooring_area: string | null
           updated_at: string
+          user_id: string | null
           voice_recording_url: string | null
           voice_transcription: string | null
         }
         Insert: {
           additional_notes?: string | null
           admin_notes?: string | null
+          approximate_length?: string | null
+          approximate_width?: string | null
+          assigned_to?: string | null
           budget_range?: string | null
           completion_urgency?: string | null
           created_at?: string
+          cutouts_required?: string[] | null
           drawing_data?: string | null
+          edge_profile_preference?: string | null
           email?: string | null
           estimated_amount?: number | null
           expected_start_date?: string | null
@@ -321,26 +336,36 @@ export type Database = {
           id?: string
           kitchen_type?: string | null
           mobile_number: string
+          number_of_counters?: number | null
           preferred_color?: string | null
           project_location?: string | null
           project_nature?: string | null
+          project_type_other?: string | null
           project_types?: string[] | null
           quantity?: string | null
           reference_images?: string[] | null
           status?: string
           stone_type?: string | null
           thickness?: string | null
+          tile_size_preference?: string | null
+          total_flooring_area?: string | null
           updated_at?: string
+          user_id?: string | null
           voice_recording_url?: string | null
           voice_transcription?: string | null
         }
         Update: {
           additional_notes?: string | null
           admin_notes?: string | null
+          approximate_length?: string | null
+          approximate_width?: string | null
+          assigned_to?: string | null
           budget_range?: string | null
           completion_urgency?: string | null
           created_at?: string
+          cutouts_required?: string[] | null
           drawing_data?: string | null
+          edge_profile_preference?: string | null
           email?: string | null
           estimated_amount?: number | null
           expected_start_date?: string | null
@@ -350,16 +375,21 @@ export type Database = {
           id?: string
           kitchen_type?: string | null
           mobile_number?: string
+          number_of_counters?: number | null
           preferred_color?: string | null
           project_location?: string | null
           project_nature?: string | null
+          project_type_other?: string | null
           project_types?: string[] | null
           quantity?: string | null
           reference_images?: string[] | null
           status?: string
           stone_type?: string | null
           thickness?: string | null
+          tile_size_preference?: string | null
+          total_flooring_area?: string | null
           updated_at?: string
+          user_id?: string | null
           voice_recording_url?: string | null
           voice_transcription?: string | null
         }
@@ -1131,6 +1161,31 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      budget_range_enum:
+        | "under_50k"
+        | "50k_to_1l"
+        | "1l_to_2l"
+        | "2l_to_5l"
+        | "above_5l"
+        | "not_decided"
+      enquiry_status:
+        | "new"
+        | "contacted"
+        | "quoted"
+        | "in_progress"
+        | "completed"
+        | "cancelled"
+      finish_type_enum: "polished" | "honed" | "leather"
+      kitchen_type: "straight" | "l_shape" | "u_shape" | "island"
+      project_nature_type: "new_construction" | "renovation"
+      stone_type_enum:
+        | "granite"
+        | "marble"
+        | "quartz"
+        | "porcelain"
+        | "not_sure"
+      thickness_option: "18mm" | "20mm" | "30mm"
+      urgency_level: "flexible" | "within_1_month" | "within_2_weeks" | "urgent"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1259,6 +1314,28 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      budget_range_enum: [
+        "under_50k",
+        "50k_to_1l",
+        "1l_to_2l",
+        "2l_to_5l",
+        "above_5l",
+        "not_decided",
+      ],
+      enquiry_status: [
+        "new",
+        "contacted",
+        "quoted",
+        "in_progress",
+        "completed",
+        "cancelled",
+      ],
+      finish_type_enum: ["polished", "honed", "leather"],
+      kitchen_type: ["straight", "l_shape", "u_shape", "island"],
+      project_nature_type: ["new_construction", "renovation"],
+      stone_type_enum: ["granite", "marble", "quartz", "porcelain", "not_sure"],
+      thickness_option: ["18mm", "20mm", "30mm"],
+      urgency_level: ["flexible", "within_1_month", "within_2_weeks", "urgent"],
     },
   },
 } as const
