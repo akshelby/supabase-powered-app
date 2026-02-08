@@ -5,11 +5,26 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 
+// Import local images
+import blackGraniteImg from '@/assets/products/black-granite.jpg';
+import kitchenCountertopsImg from '@/assets/categories/kitchen-countertops.jpg';
+import flooringImg from '@/assets/categories/flooring.jpg';
+import bathroomImg from '@/assets/categories/bathroom.jpg';
+import staircasesImg from '@/assets/categories/staircases.jpg';
+
 interface CarouselCard {
   id: string;
   title: string;
   image_url: string;
 }
+
+const fallbackImages: Record<string, string> = {
+  'Black Galaxy Granite': blackGraniteImg,
+  'Kitchen Countertops': kitchenCountertopsImg,
+  'Luxury Flooring': flooringImg,
+  'Modern Bathrooms': bathroomImg,
+  'Stone Staircases': staircasesImg,
+};
 
 export function HeroSection() {
   const [cards, setCards] = useState<CarouselCard[]>([]);
@@ -35,13 +50,20 @@ export function HeroSection() {
       .order('display_order');
     
     if (data && data.length > 0) {
-      setCards(data);
+      // Map to use fallback images if placeholder
+      const mappedCards = data.map(card => ({
+        ...card,
+        image_url: card.image_url === '/placeholder.svg' 
+          ? (fallbackImages[card.title] || blackGraniteImg)
+          : card.image_url
+      }));
+      setCards(mappedCards);
     } else {
       // Fallback placeholder cards
       setCards([
-        { id: '1', title: 'Premium Granite', image_url: '/placeholder.svg' },
-        { id: '2', title: 'Elegant Marble', image_url: '/placeholder.svg' },
-        { id: '3', title: 'Modern Countertops', image_url: '/placeholder.svg' },
+        { id: '1', title: 'Premium Granite', image_url: blackGraniteImg },
+        { id: '2', title: 'Elegant Marble', image_url: kitchenCountertopsImg },
+        { id: '3', title: 'Modern Countertops', image_url: flooringImg },
       ]);
     }
   };

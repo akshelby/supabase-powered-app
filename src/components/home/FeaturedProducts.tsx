@@ -10,6 +10,25 @@ import { useWishlist } from '@/contexts/WishlistContext';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 
+// Import product images
+import blackGraniteImg from '@/assets/products/black-granite.jpg';
+import brownGraniteImg from '@/assets/products/brown-granite.jpg';
+import greenGraniteImg from '@/assets/products/green-granite.jpg';
+import bluePearlImg from '@/assets/products/blue-pearl.jpg';
+import redGraniteImg from '@/assets/products/red-granite.jpg';
+import greyGraniteImg from '@/assets/products/grey-granite.jpg';
+
+const productImages: Record<string, string> = {
+  'black-galaxy-granite': blackGraniteImg,
+  'absolute-black-granite': blackGraniteImg,
+  'kashmir-white-granite': greyGraniteImg,
+  'tan-brown-granite': brownGraniteImg,
+  'blue-pearl-granite': bluePearlImg,
+  'imperial-red-granite': redGraniteImg,
+  'steel-grey-granite': greyGraniteImg,
+  'green-galaxy-granite': greenGraniteImg,
+};
+
 export function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const { addToCart } = useCart();
@@ -33,6 +52,13 @@ export function FeaturedProducts() {
     }
   };
 
+  const getProductImage = (product: Product) => {
+    if (product.images && product.images.length > 0 && product.images[0] !== '/placeholder.svg') {
+      return product.images[0];
+    }
+    return productImages[product.slug] || blackGraniteImg;
+  };
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -47,7 +73,7 @@ export function FeaturedProducts() {
       name: product.name,
       price: product.price,
       quantity: 1,
-      image: product.images?.[0] || '/placeholder.svg',
+      image: getProductImage(product),
     });
   };
 
@@ -92,7 +118,7 @@ export function FeaturedProducts() {
             >
               <div className="relative aspect-square overflow-hidden">
                 <img
-                  src={product.images?.[0] || '/placeholder.svg'}
+                  src={getProductImage(product)}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
