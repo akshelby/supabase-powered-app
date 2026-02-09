@@ -1,0 +1,9 @@
+-- Update products with placeholder images based on their type
+UPDATE products SET images = ARRAY['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop'] WHERE slug = 'black-galaxy-granite';
+UPDATE products SET images = ARRAY['https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=800&h=600&fit=crop'] WHERE slug = 'absolute-black-granite';
+UPDATE products SET images = ARRAY['https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&h=600&fit=crop'] WHERE slug = 'kashmir-white-granite';
+UPDATE products SET images = ARRAY['https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop'] WHERE slug = 'tan-brown-granite';
+UPDATE products SET images = ARRAY['https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=600&fit=crop'] WHERE slug = 'blue-pearl-granite';
+UPDATE products SET images = ARRAY['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop'] WHERE slug = 'imperial-red-granite';
+UPDATE products SET images = ARRAY['https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=800&h=600&fit=crop'] WHERE slug = 'steel-grey-granite';
+UPDATE products SET images = ARRAY['https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&h=600&fit=crop'] WHERE slug = 'green-galaxy-granite';
