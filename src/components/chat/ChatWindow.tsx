@@ -405,7 +405,7 @@ export function ChatWindow({
             ) : messages.length === 0 ? (
               <ChatEmptyState refId={refId!} />
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {messages.map((message, index) => {
                   const currentDate = new Date(message.created_at);
                   const prevDate = index > 0 ? new Date(messages[index - 1].created_at) : null;
