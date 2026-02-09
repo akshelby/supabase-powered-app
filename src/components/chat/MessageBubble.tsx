@@ -29,43 +29,39 @@ export function MessageBubble({ message }: MessageBubbleProps) {
   };
 
   return (
-    <div className={cn("flex flex-col gap-1", isStaff ? "items-start" : "items-end")}>
-      <span className="text-xs text-muted-foreground px-1">
-        {isStaff ? (message.sender_name || "Support") : "You"}
-      </span>
-      
+    <div className={cn("flex w-full", isStaff ? "justify-start" : "justify-end")}>
       <div
         className={cn(
-          "max-w-[280px] rounded-2xl px-4 py-2.5 pb-5 shadow-sm relative",
+          "max-w-[280px] rounded-2xl px-3 py-2 shadow-sm flex flex-col",
           isStaff
-            ? "bg-[#E5E7EB] text-[#1A1A1A] rounded-bl-md"
-            : "bg-[#001F3F] text-white rounded-br-md"
+            ? "bg-[#E5E7EB] text-[#1A1A1A] rounded-tl-none"
+            : "bg-[#001F3F] text-white rounded-tr-none"
         )}
       >
         {/* Media content */}
         {message.media_url && message.media_type === 'image' && (
-          <div className="mb-2 -mx-2 -mt-1">
+          <div className="mb-1.5 max-w-[280px]">
             <img
               src={message.media_url}
               alt="Shared image"
-              className="rounded-xl max-w-full cursor-pointer hover:opacity-90 transition-opacity"
+              className="rounded-xl w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
               onClick={() => window.open(message.media_url!, '_blank')}
             />
           </div>
         )}
 
         {message.media_url && message.media_type === 'video' && (
-          <div className="mb-2 -mx-2 -mt-1 relative group cursor-pointer">
+          <div className="mb-1.5 max-w-[280px]">
             <video
               src={message.media_url}
-              className="rounded-xl max-w-full"
+              className="rounded-xl w-full h-auto aspect-video"
               controls
             />
           </div>
         )}
 
         {message.media_url && message.media_type === 'audio' && (
-          <div className="mb-2 flex items-center gap-3 bg-black/10 rounded-xl p-2">
+          <div className="mb-1.5 flex items-center gap-3 bg-black/10 rounded-xl p-2">
             <button
               onClick={toggleAudio}
               className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center hover:bg-black/20 transition-colors"
@@ -95,9 +91,9 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           <p className="text-sm whitespace-pre-wrap break-words">{message.content_text}</p>
         )}
 
-        {/* Timestamp + status inside bubble */}
+        {/* Timestamp + status */}
         <span className={cn(
-          "absolute bottom-1.5 right-3 text-[10px] flex items-center gap-1",
+          "text-[10px] flex items-center gap-1 self-end mt-1",
           isStaff ? "text-[#1A1A1A]/50" : "text-white/60"
         )}>
           {format(new Date(message.created_at), "h:mm a")}
