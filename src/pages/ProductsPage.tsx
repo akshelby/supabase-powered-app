@@ -167,9 +167,9 @@ export default function ProductsPage() {
 
         {/* Products Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-muted animate-pulse rounded-xl h-80" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} className="bg-muted animate-pulse rounded-lg h-56" />
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
@@ -182,36 +182,37 @@ export default function ProductsPage() {
         ) : (
           <div
             className={cn(
-              'grid gap-6',
+              'grid',
               viewMode === 'grid'
-                ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
-                : 'grid-cols-1'
+                ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4'
+                : 'grid-cols-1 gap-4'
             )}
           >
             {filteredProducts.map((product, index) => (
               <motion.div
                 key={product.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
+                transition={{ delay: index * 0.02 }}
                 className={cn(
-                  'group bg-card rounded-xl overflow-hidden border border-border hover:shadow-lg transition-all',
+                  'group bg-card rounded-lg overflow-hidden border border-border hover:shadow-md transition-all',
                   viewMode === 'list' && 'flex'
                 )}
               >
                 <div
                   className={cn(
                     'relative overflow-hidden',
-                    viewMode === 'grid' ? 'aspect-square' : 'w-48 shrink-0'
+                    viewMode === 'grid' ? 'aspect-[4/3]' : 'w-36 shrink-0'
                   )}
                 >
                   <img
                     src={product.images?.[0] || '/placeholder.svg'}
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
                   />
                   {product.compare_price && product.compare_price > product.price && (
-                    <span className="absolute top-3 left-3 px-2 py-1 bg-destructive text-destructive-foreground text-xs font-medium rounded">
+                    <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-destructive text-destructive-foreground text-[10px] font-medium rounded">
                       {Math.round((1 - product.price / product.compare_price) * 100)}% OFF
                     </span>
                   )}
@@ -219,46 +220,43 @@ export default function ProductsPage() {
                     <button
                       onClick={() => handleWishlistToggle(product.id)}
                       className={cn(
-                        'absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center transition-colors',
+                        'absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 flex items-center justify-center transition-colors',
                         isInWishlist(product.id)
                           ? 'text-destructive'
                           : 'text-muted-foreground hover:text-destructive'
                       )}
                     >
                       <Heart
-                        className={cn('h-4 w-4', isInWishlist(product.id) && 'fill-current')}
+                        className={cn('h-3.5 w-3.5', isInWishlist(product.id) && 'fill-current')}
                       />
                     </button>
                   )}
                 </div>
-                <div className="p-4 flex-1">
+                <div className="p-2.5 sm:p-3 flex-1">
                   <Link to={`/products/${product.slug}`}>
-                    <h3 className="font-semibold hover:text-primary transition-colors line-clamp-1">
+                    <h3 className="text-sm font-medium hover:text-primary transition-colors line-clamp-2 leading-tight">
                       {product.name}
                     </h3>
                   </Link>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                    {product.short_description}
-                  </p>
-                  <div className="flex items-center justify-between mt-4">
-                    <div>
-                      <span className="text-lg font-bold text-primary">
-                        {formatPrice(product.price)}
+                  <div className="mt-2">
+                    <span className="text-sm sm:text-base font-bold text-primary">
+                      {formatPrice(product.price)}
+                    </span>
+                    {product.compare_price && product.compare_price > product.price && (
+                      <span className="text-xs text-muted-foreground line-through ml-1.5">
+                        {formatPrice(product.compare_price)}
                       </span>
-                      {product.compare_price && product.compare_price > product.price && (
-                        <span className="text-sm text-muted-foreground line-through ml-2">
-                          {formatPrice(product.compare_price)}
-                        </span>
-                      )}
-                    </div>
-                    <Button
-                      size="sm"
-                      onClick={() => handleAddToCart(product)}
-                    >
-                      <ShoppingCart className="h-4 w-4 mr-2" />
-                      Add
-                    </Button>
+                    )}
                   </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full mt-2 h-8 text-xs"
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    <ShoppingCart className="h-3.5 w-3.5 mr-1.5" />
+                    Add to Cart
+                  </Button>
                 </div>
               </motion.div>
             ))}
