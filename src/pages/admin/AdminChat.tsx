@@ -108,7 +108,7 @@ export default function AdminChat() {
   useEffect(() => {
     if (!selectedConversation) return;
     fetchMessages();
-    const interval = setInterval(fetchMessages, 3000);
+    const interval = setInterval(fetchMessages, 500);
 
     const channel = supabase
       .channel(`admin-messages:${selectedConversation.ref_id}`)

@@ -90,7 +90,7 @@ export function ChatWindow({
   useEffect(() => {
     if (!refId) return;
     fetchMessages(true);
-    const interval = setInterval(() => fetchMessages(false), 3000);
+    const interval = setInterval(() => fetchMessages(false), 500);
     return () => clearInterval(interval);
   }, [refId, fetchMessages]);
 
