@@ -127,14 +127,22 @@ export default function ChatPage() {
   const markStaffMessagesAsRead = useCallback(async () => {
     if (!refId) return;
     try {
-      const { error } = await supabase
+      const { data: unread } = await supabase
         .from('messages')
-        .update({ is_read: true })
+        .select('id')
         .eq('ref_id', refId)
         .eq('sender_type', 'staff')
         .eq('is_read', false);
-      if (error) {
-        console.error('Supabase update error (mark staff read):', error);
+
+      if (unread && unread.length > 0) {
+        const ids = unread.map(m => m.id);
+        const { error } = await supabase
+          .from('messages')
+          .update({ is_read: true })
+          .in('id', ids);
+        if (error) {
+          console.error('Supabase update error (mark staff read):', error);
+        }
       }
     } catch (err) {
       console.error('Error marking messages as read:', err);
