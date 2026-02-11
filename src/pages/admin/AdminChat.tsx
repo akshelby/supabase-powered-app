@@ -105,9 +105,24 @@ export default function AdminChat() {
     }
   }, [selectedConversation]);
 
+  const markCustomerMessagesAsRead = useCallback(async () => {
+    if (!selectedConversation) return;
+    try {
+      await supabase
+        .from('messages')
+        .update({ is_read: true })
+        .eq('ref_id', selectedConversation.ref_id)
+        .eq('sender_type', 'customer')
+        .eq('is_read', false);
+    } catch (err) {
+      console.error('Error marking messages as read:', err);
+    }
+  }, [selectedConversation]);
+
   useEffect(() => {
     if (!selectedConversation) return;
     fetchMessages();
+    markCustomerMessagesAsRead();
     const interval = setInterval(fetchMessages, 500);
 
     const channel = supabase
@@ -117,6 +132,7 @@ export default function AdminChat() {
         filter: `ref_id=eq.${selectedConversation.ref_id}`,
       }, () => {
         fetchMessages();
+        markCustomerMessagesAsRead();
       })
       .subscribe();
 
@@ -124,7 +140,7 @@ export default function AdminChat() {
       clearInterval(interval);
       supabase.removeChannel(channel);
     };
-  }, [selectedConversation, fetchMessages]);
+  }, [selectedConversation, fetchMessages, markCustomerMessagesAsRead]);
 
   // Auto-scroll
   useEffect(() => {

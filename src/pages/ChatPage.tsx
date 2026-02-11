@@ -124,12 +124,27 @@ export default function ChatPage() {
     }
   }, [refId]);
 
+  const markStaffMessagesAsRead = useCallback(async () => {
+    if (!refId) return;
+    try {
+      await supabase
+        .from('messages')
+        .update({ is_read: true })
+        .eq('ref_id', refId)
+        .eq('sender_type', 'staff')
+        .eq('is_read', false);
+    } catch (err) {
+      console.error('Error marking messages as read:', err);
+    }
+  }, [refId]);
+
   useEffect(() => {
     if (!refId) return;
     fetchMessages(true);
+    markStaffMessagesAsRead();
     const interval = setInterval(() => fetchMessages(false), 500);
     return () => clearInterval(interval);
-  }, [refId, fetchMessages]);
+  }, [refId, fetchMessages, markStaffMessagesAsRead]);
 
   useEffect(() => {
     if (!refId || !conversationId || messages.length === 0) return;
@@ -152,13 +167,14 @@ export default function ChatPage() {
         event: 'INSERT', schema: 'public', table: 'messages', filter: `ref_id=eq.${refId}`,
       }, () => {
         fetchMessages(false);
+        markStaffMessagesAsRead();
         if (notificationsEnabled) {
           notificationSoundRef.current?.play().catch(() => {});
         }
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [refId, notificationsEnabled, fetchMessages]);
+  }, [refId, notificationsEnabled, fetchMessages, markStaffMessagesAsRead]);
 
   const scrollToBottom = useCallback(() => {
     setTimeout(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, 100);

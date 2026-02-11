@@ -87,12 +87,27 @@ export function ChatWindow({
     }
   }, [refId]);
 
+  const markStaffMessagesAsRead = useCallback(async () => {
+    if (!refId) return;
+    try {
+      await supabase
+        .from('messages')
+        .update({ is_read: true })
+        .eq('ref_id', refId)
+        .eq('sender_type', 'staff')
+        .eq('is_read', false);
+    } catch (err) {
+      console.error('Error marking messages as read:', err);
+    }
+  }, [refId]);
+
   useEffect(() => {
     if (!refId) return;
     fetchMessages(true);
+    markStaffMessagesAsRead();
     const interval = setInterval(() => fetchMessages(false), 500);
     return () => clearInterval(interval);
-  }, [refId, fetchMessages]);
+  }, [refId, fetchMessages, markStaffMessagesAsRead]);
 
   useEffect(() => {
     if (!refId) return;
@@ -109,6 +124,7 @@ export function ChatWindow({
         },
         () => {
           fetchMessages(false);
+          markStaffMessagesAsRead();
           if (notificationsEnabled) {
             notificationSoundRef.current?.play().catch(() => {});
           }
@@ -119,7 +135,7 @@ export function ChatWindow({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [refId, notificationsEnabled, fetchMessages]);
+  }, [refId, notificationsEnabled, fetchMessages, markStaffMessagesAsRead]);
 
   // Auto-scroll to bottom
   const scrollToBottom = useCallback(() => {

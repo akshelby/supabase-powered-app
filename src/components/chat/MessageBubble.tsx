@@ -199,8 +199,10 @@ export function MessageBubble({ message, isAdminView = false }: MessageBubblePro
               <Clock className="w-3 h-3" />
             ) : message._status === 'failed' ? (
               <AlertCircle className="w-3 h-3 text-red-400" />
+            ) : message.is_read ? (
+              <CheckCheck className="w-3 h-3 text-[#ef4444]" />
             ) : (
-              <CheckCheck className="w-3 h-3" />
+              <Check className="w-3 h-3" />
             )
           )}
         </span>
