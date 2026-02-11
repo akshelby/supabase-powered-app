@@ -90,12 +90,15 @@ export function ChatWindow({
   const markStaffMessagesAsRead = useCallback(async () => {
     if (!refId) return;
     try {
-      await supabase
+      const { error } = await supabase
         .from('messages')
         .update({ is_read: true })
         .eq('ref_id', refId)
         .eq('sender_type', 'staff')
         .eq('is_read', false);
+      if (error) {
+        console.error('Supabase update error (mark staff read):', error);
+      }
     } catch (err) {
       console.error('Error marking messages as read:', err);
     }
@@ -105,7 +108,10 @@ export function ChatWindow({
     if (!refId) return;
     fetchMessages(true);
     markStaffMessagesAsRead();
-    const interval = setInterval(() => fetchMessages(false), 500);
+    const interval = setInterval(() => {
+      fetchMessages(false);
+      markStaffMessagesAsRead();
+    }, 500);
     return () => clearInterval(interval);
   }, [refId, fetchMessages, markStaffMessagesAsRead]);
 

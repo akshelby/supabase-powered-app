@@ -108,12 +108,15 @@ export default function AdminChat() {
   const markCustomerMessagesAsRead = useCallback(async () => {
     if (!selectedConversation) return;
     try {
-      await supabase
+      const { error, count } = await supabase
         .from('messages')
         .update({ is_read: true })
         .eq('ref_id', selectedConversation.ref_id)
         .eq('sender_type', 'customer')
         .eq('is_read', false);
+      if (error) {
+        console.error('Supabase update error (mark read):', error);
+      }
     } catch (err) {
       console.error('Error marking messages as read:', err);
     }
@@ -123,7 +126,10 @@ export default function AdminChat() {
     if (!selectedConversation) return;
     fetchMessages();
     markCustomerMessagesAsRead();
-    const interval = setInterval(fetchMessages, 500);
+    const interval = setInterval(() => {
+      fetchMessages();
+      markCustomerMessagesAsRead();
+    }, 500);
 
     const channel = supabase
       .channel(`admin-messages:${selectedConversation.ref_id}`)
