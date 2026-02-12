@@ -45,6 +45,9 @@ export function PremiumCollection() {
   const [startX, setStartX] = useState(0);
   const [startRotation, setStartRotation] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
+  const velocityRef = useRef(0);
+  const lastMoveRef = useRef({ x: 0, time: 0 });
+  const momentumRef = useRef<number | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -75,30 +78,63 @@ export function PremiumCollection() {
   useEffect(() => {
     if (!autoRotate || isDragging || products.length === 0) return;
     const interval = setInterval(() => {
-      setRotation(prev => prev - 0.3);
-    }, 30);
+      setRotation(prev => prev - 0.6);
+    }, 16);
     return () => clearInterval(interval);
   }, [autoRotate, isDragging, products.length]);
 
+  const stopMomentum = useCallback(() => {
+    if (momentumRef.current) {
+      cancelAnimationFrame(momentumRef.current);
+      momentumRef.current = null;
+    }
+  }, []);
+
+  const startMomentum = useCallback(() => {
+    stopMomentum();
+    let v = velocityRef.current;
+    const friction = 0.95;
+    const tick = () => {
+      v *= friction;
+      if (Math.abs(v) < 0.05) {
+        setTimeout(() => setAutoRotate(true), 2000);
+        return;
+      }
+      setRotation(prev => prev + v);
+      momentumRef.current = requestAnimationFrame(tick);
+    };
+    momentumRef.current = requestAnimationFrame(tick);
+  }, [stopMomentum]);
+
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    stopMomentum();
     setIsDragging(true);
     setAutoRotate(false);
     setStartX(e.clientX);
     setStartRotation(rotation);
+    velocityRef.current = 0;
+    lastMoveRef.current = { x: e.clientX, time: performance.now() };
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-  }, [rotation]);
+  }, [rotation, stopMomentum]);
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     if (!isDragging) return;
+    const now = performance.now();
     const deltaX = e.clientX - startX;
-    const sensitivity = 0.3;
+    const sensitivity = 0.4;
     setRotation(startRotation + deltaX * sensitivity);
+
+    const dt = now - lastMoveRef.current.time;
+    if (dt > 0) {
+      velocityRef.current = ((e.clientX - lastMoveRef.current.x) * sensitivity) / Math.max(dt / 16, 1);
+    }
+    lastMoveRef.current = { x: e.clientX, time: now };
   }, [isDragging, startX, startRotation]);
 
   const handlePointerUp = useCallback(() => {
     setIsDragging(false);
-    setTimeout(() => setAutoRotate(true), 3000);
-  }, []);
+    startMomentum();
+  }, [startMomentum]);
 
   const [isMobile, setIsMobile] = useState(false);
 
