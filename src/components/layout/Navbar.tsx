@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/contexts/CartContext';
+import { useTabs } from '@/contexts/TabContext';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
@@ -31,6 +32,7 @@ export function Navbar() {
   const location = useLocation();
   const { user, role, signOut } = useAuth();
   const { getCartCount, setMiniCartOpen } = useCart();
+  const { addTab } = useTabs();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -88,12 +90,18 @@ export function Navbar() {
               <Link
                 key={link.href}
                 to={link.href}
+                onClick={(e) => {
+                  if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+                  e.preventDefault();
+                  addTab(link.href, link.name);
+                }}
                 className={cn(
                   'px-4 py-2 text-sm font-medium rounded-lg transition-colors',
                   location.pathname === link.href
                     ? 'text-primary bg-primary/10'
                     : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                 )}
+                data-testid={`nav-${link.name.toLowerCase()}`}
               >
                 {link.name}
               </Link>
@@ -204,6 +212,12 @@ export function Navbar() {
                 <Link
                   key={link.href}
                   to={link.href}
+                  onClick={(e) => {
+                    if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+                    e.preventDefault();
+                    addTab(link.href, link.name);
+                    setIsOpen(false);
+                  }}
                   className={cn(
                     'block px-4 py-3 rounded-lg text-sm font-medium transition-colors',
                     location.pathname === link.href

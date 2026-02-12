@@ -5,6 +5,7 @@ import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { FloatingActionButton } from './FloatingActionButton';
 import { MiniCart } from '@/components/cart/MiniCart';
+import { TabBar } from './TabBar';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -21,12 +22,17 @@ export function MainLayout({ children, hideFooter = false }: MainLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
+      <div className="pt-16 lg:pt-20">
+        <div className="sticky top-16 lg:top-20 z-40">
+          <TabBar />
+        </div>
+      </div>
       <motion.main
         key={pathname}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="flex-1 pt-16 lg:pt-20"
+        className="flex-1"
       >
         {children}
       </motion.main>
