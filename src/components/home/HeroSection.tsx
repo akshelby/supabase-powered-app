@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight, Gem } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -137,6 +137,20 @@ export function HeroSection() {
               </Button>
               <Button size="lg" variant="outline" asChild>
                 <Link to="/estimation">Get Free Estimation</Link>
+              </Button>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="flex justify-center lg:justify-start mt-3"
+            >
+              <Button size="lg" variant="outline" asChild className="border-primary/30 text-primary" data-testid="button-visualizer-cta">
+                <Link to="/visualizer">
+                  <Gem className="mr-2 h-4 w-4" />
+                  Try Stone Visualizer
+                </Link>
               </Button>
             </motion.div>
           </motion.div>
