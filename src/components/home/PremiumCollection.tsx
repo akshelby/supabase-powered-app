@@ -113,12 +113,13 @@ export function PremiumCollection() {
   if (cardCount === 0) return null;
 
   const anglePerCard = 360 / cardCount;
-  const cardW = isMobile ? 140 : 220;
-  const cardH = isMobile ? 200 : 300;
-  const containerH = isMobile ? 280 : 420;
-  const radius = isMobile
-    ? (cardCount <= 4 ? 140 : cardCount <= 6 ? 170 : 200)
-    : (cardCount <= 4 ? 220 : cardCount <= 6 ? 280 : 320);
+  const cardW = isMobile ? 120 : 180;
+  const cardH = isMobile ? 170 : 260;
+  const containerH = isMobile ? 260 : 380;
+  const halfCard = cardW / 2;
+  const gap = isMobile ? 8 : 12;
+  const minRadius = Math.ceil((halfCard + gap) / Math.sin(Math.PI / cardCount));
+  const radius = Math.max(minRadius, isMobile ? 100 : 160);
 
   return (
     <section className="py-10 sm:py-16 md:py-20 bg-muted/30 overflow-hidden">
