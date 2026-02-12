@@ -86,26 +86,40 @@ export function PremiumCollection() {
     setTimeout(() => setAutoRotate(true), 3000);
   }, []);
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
   const cardCount = products.length;
   if (cardCount === 0) return null;
 
   const anglePerCard = 360 / cardCount;
-  const radius = cardCount <= 4 ? 220 : cardCount <= 6 ? 280 : 320;
+  const cardW = isMobile ? 140 : 220;
+  const cardH = isMobile ? 200 : 300;
+  const containerH = isMobile ? 280 : 420;
+  const radius = isMobile
+    ? (cardCount <= 4 ? 140 : cardCount <= 6 ? 170 : 200)
+    : (cardCount <= 4 ? 220 : cardCount <= 6 ? 280 : 320);
 
   return (
-    <section className="py-16 sm:py-20 bg-muted/30 overflow-hidden">
+    <section className="py-10 sm:py-16 md:py-20 bg-muted/30 overflow-hidden">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-6"
+          className="text-center mb-4 sm:mb-6"
         >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-foreground">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-display font-bold text-foreground">
             Premium Collection
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-muted-foreground">
             Swipe to rotate
           </p>
         </motion.div>
@@ -113,8 +127,8 @@ export function PremiumCollection() {
         <div
           className="relative mx-auto select-none"
           style={{
-            height: '420px',
-            perspective: '1200px',
+            height: `${containerH}px`,
+            perspective: isMobile ? '800px' : '1200px',
             cursor: isDragging ? 'grabbing' : 'grab',
           }}
           onPointerDown={handlePointerDown}
@@ -142,10 +156,10 @@ export function PremiumCollection() {
                   key={product.id}
                   className="absolute"
                   style={{
-                    width: '220px',
-                    height: '300px',
-                    left: '-110px',
-                    top: '-150px',
+                    width: `${cardW}px`,
+                    height: `${cardH}px`,
+                    left: `${-cardW / 2}px`,
+                    top: `${-cardH / 2}px`,
                     transformStyle: 'preserve-3d',
                     transform: `rotateY(${angle}deg) translateZ(${radius}px)`,
                     backfaceVisibility: 'hidden',
@@ -169,12 +183,12 @@ export function PremiumCollection() {
                         draggable={false}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-4">
-                        <h3 className="text-white text-base font-semibold leading-tight">
+                      <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4">
+                        <h3 className="text-white text-xs sm:text-base font-semibold leading-tight">
                           {product.name}
                         </h3>
                         {product.price && (
-                          <p className="text-white/80 text-sm mt-1">
+                          <p className="text-white/80 text-[10px] sm:text-sm mt-0.5 sm:mt-1">
                             ₹{Number(product.price).toLocaleString('en-IN')}
                           </p>
                         )}
