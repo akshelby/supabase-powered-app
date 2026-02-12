@@ -165,7 +165,9 @@ export function PremiumCollection() {
               const angle = index * anglePerCard;
               const cardRotation = angle + rotation;
               const normalizedAngle = ((cardRotation % 360) + 360) % 360;
-              const isFront = normalizedAngle < 60 || normalizedAngle > 300;
+              const deviationFromFront = normalizedAngle > 180 ? 360 - normalizedAngle : normalizedAngle;
+              const opacity = deviationFromFront < 90 ? 1 : Math.max(0, 1 - (deviationFromFront - 90) / 60);
+              const scale = deviationFromFront < 30 ? 1.05 : 1;
 
               return (
                 <div
@@ -177,16 +179,17 @@ export function PremiumCollection() {
                     left: `${-cardW / 2}px`,
                     top: `${-cardH / 2}px`,
                     transformStyle: 'preserve-3d',
-                    transform: `rotateY(${angle}deg) translateZ(${radius}px)`,
-                    backfaceVisibility: 'hidden',
+                    transform: `rotateY(${angle}deg) translateZ(${radius}px) scale(${scale})`,
+                    opacity,
+                    transition: 'opacity 0.3s ease',
                   }}
                 >
                   <Link
                     to={`/products/${product.slug || product.id}`}
                     className={cn(
-                      'block w-full h-full rounded-xl overflow-hidden shadow-lg',
+                      'block w-full h-full rounded-xl overflow-hidden',
                       'transition-shadow duration-300',
-                      isFront ? 'shadow-xl' : 'shadow-md'
+                      deviationFromFront < 30 ? 'shadow-xl' : deviationFromFront < 90 ? 'shadow-lg' : 'shadow-md'
                     )}
                     onClick={(e) => { if (isDragging) e.preventDefault(); }}
                     data-testid={`collection-card-${product.id}`}
