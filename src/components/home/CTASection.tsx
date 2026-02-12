@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 
 export function CTASection() {
   return (
-    <section className="section-padding bg-primary text-primary-foreground relative overflow-hidden">
+    <section className="py-8 sm:py-12 lg:py-16 bg-primary text-primary-foreground relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
@@ -20,33 +20,33 @@ export function CTASection() {
           viewport={{ once: true }}
           className="text-center max-w-3xl mx-auto"
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-6">
+          <h2 className="text-xl sm:text-3xl lg:text-5xl font-display font-bold mb-3 sm:mb-6">
             Ready to Transform Your Space?
           </h2>
-          <p className="text-lg opacity-90 mb-8">
+          <p className="text-sm sm:text-base lg:text-lg opacity-90 mb-4 sm:mb-8">
             Get a free consultation and estimate for your granite or marble project. 
             Our experts are ready to help bring your vision to life.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-row flex-wrap gap-2 sm:gap-4 justify-center">
             <Button
-              size="lg"
+              size="default"
               variant="secondary"
               asChild
-              className="group"
+              className="group text-xs sm:text-sm"
             >
               <Link to="/estimation">
                 Get Free Estimation
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
             <Button
-              size="lg"
+              size="default"
               variant="outline"
               asChild
-              className="border-primary-foreground/30 hover:bg-primary-foreground/10"
+              className="border-primary-foreground/30 text-xs sm:text-sm"
             >
               <a href="tel:+919876543210">
-                <Phone className="mr-2 h-4 w-4" />
+                <Phone className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 Call Us Now
               </a>
             </Button>

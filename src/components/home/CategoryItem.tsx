@@ -31,8 +31,8 @@ export function CategoryItem({ name, icon: Icon, link, iconColor, bgColor, borde
       >
         <motion.div
           className={cn(
-            'relative w-18 h-18 sm:w-20 sm:h-20 md:w-24 md:h-24',
-            'rounded-2xl flex items-center justify-center',
+            'relative w-14 h-14 sm:w-[4.5rem] sm:h-[4.5rem] md:w-24 md:h-24',
+            'rounded-xl sm:rounded-2xl flex items-center justify-center',
             'border-2 transition-all duration-300',
             bgColor || 'bg-card',
             borderColor || 'border-border',
@@ -44,7 +44,7 @@ export function CategoryItem({ name, icon: Icon, link, iconColor, bgColor, borde
         >
           <Icon
             className={cn(
-              'w-8 h-8 sm:w-9 sm:h-9 md:w-11 md:h-11',
+              'w-6 h-6 sm:w-8 sm:h-8 md:w-11 md:h-11',
               'transition-transform duration-300 relative z-10',
               'group-hover:scale-110',
               iconColor || 'text-foreground/70'
@@ -55,8 +55,8 @@ export function CategoryItem({ name, icon: Icon, link, iconColor, bgColor, borde
 
         <span
           className={cn(
-            'text-xs sm:text-sm font-semibold text-center',
-            'transition-colors duration-300 leading-tight max-w-[6rem]',
+            'text-[10px] sm:text-xs md:text-sm font-semibold text-center',
+            'transition-colors duration-300 leading-tight max-w-[5rem] sm:max-w-[6rem]',
             'text-muted-foreground group-hover:text-foreground'
           )}
         >

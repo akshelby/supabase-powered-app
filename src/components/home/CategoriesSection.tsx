@@ -100,19 +100,19 @@ const containerVariants = {
 
 export function CategoriesSection() {
   return (
-    <section className="py-12 sm:py-16 md:py-20 bg-background">
+    <section className="py-8 sm:py-12 md:py-16 bg-background">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-8 sm:mb-10 md:mb-12"
+          className="text-center mb-4 sm:mb-8 md:mb-12"
         >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-foreground">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-display font-bold text-foreground">
             Explore Categories
           </h2>
-          <p className="mt-2 text-sm sm:text-base text-muted-foreground">
+          <p className="mt-1 text-xs sm:text-sm md:text-base text-muted-foreground">
             Premium stone surfaces for every space
           </p>
         </motion.div>
@@ -122,7 +122,7 @@ export function CategoriesSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-50px' }}
-          className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-10"
+          className="grid grid-cols-4 sm:flex sm:flex-wrap sm:justify-center gap-3 sm:gap-6 md:gap-10"
         >
           {categories.map((category, index) => (
             <CategoryItem

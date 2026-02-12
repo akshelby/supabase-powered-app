@@ -45,9 +45,9 @@ function Counter({ value, suffix }: { value: number; suffix: string }) {
 
 export function StatsSection() {
   return (
-    <section className="py-16 bg-primary text-primary-foreground">
+    <section className="py-8 sm:py-12 lg:py-16 bg-primary text-primary-foreground">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
@@ -57,13 +57,13 @@ export function StatsSection() {
               transition={{ delay: index * 0.1 }}
               className="text-center"
             >
-              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-white/10 flex items-center justify-center">
-                <stat.icon className="h-7 w-7" />
+              <div className="w-9 h-9 sm:w-12 sm:h-12 lg:w-14 lg:h-14 mx-auto mb-2 sm:mb-4 rounded-full bg-white/10 flex items-center justify-center">
+                <stat.icon className="h-4 w-4 sm:h-6 sm:w-6 lg:h-7 lg:w-7" />
               </div>
-              <div className="text-3xl sm:text-4xl font-bold font-display mb-2">
+              <div className="text-lg sm:text-2xl lg:text-4xl font-bold font-display mb-0.5 sm:mb-2">
                 <Counter value={stat.value} suffix={stat.suffix} />
               </div>
-              <p className="text-sm opacity-80">{stat.label}</p>
+              <p className="text-[10px] sm:text-xs lg:text-sm opacity-80 leading-tight">{stat.label}</p>
             </motion.div>
           ))}
         </div>

@@ -32,24 +32,24 @@ export function TestimonialsSection() {
   };
 
   return (
-    <section className="section-padding bg-muted/50">
+    <section className="py-8 sm:py-12 lg:py-16 bg-muted/50">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-4 sm:mb-8 lg:mb-12"
         >
-          <span className="text-primary font-medium">Testimonials</span>
-          <h2 className="text-3xl sm:text-4xl font-display font-bold mt-2 mb-4">
+          <span className="text-primary font-medium text-xs sm:text-sm">Testimonials</span>
+          <h2 className="text-xl sm:text-3xl lg:text-4xl font-display font-bold mt-1 sm:mt-2 mb-1 sm:mb-4">
             What Our Clients Say
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-xs sm:text-sm lg:text-base max-w-2xl mx-auto">
             Hear from our satisfied customers about their experience with SP Granites.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.id}
@@ -57,14 +57,14 @@ export function TestimonialsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="bg-card p-6 rounded-xl border border-border relative"
+              className="bg-card p-4 sm:p-5 lg:p-6 rounded-lg sm:rounded-xl border border-border relative"
             >
-              <Quote className="absolute top-4 right-4 h-8 w-8 text-primary/20" />
-              <div className="flex gap-1 mb-4">
+              <Quote className="absolute top-3 right-3 h-5 w-5 sm:h-8 sm:w-8 text-primary/20" />
+              <div className="flex gap-0.5 mb-2 sm:mb-4">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star
                     key={i}
-                    className={`h-4 w-4 ${
+                    className={`h-3 w-3 sm:h-4 sm:w-4 ${
                       i < testimonial.rating
                         ? 'text-primary fill-primary'
                         : 'text-muted'
@@ -72,17 +72,17 @@ export function TestimonialsSection() {
                   />
                 ))}
               </div>
-              <p className="text-muted-foreground mb-6 line-clamp-4">
+              <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-6 line-clamp-3 sm:line-clamp-4">
                 "{testimonial.review_text}"
               </p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs sm:text-sm">
                   {testimonial.customer_name.charAt(0)}
                 </div>
                 <div>
-                  <h4 className="font-semibold">{testimonial.customer_name}</h4>
+                  <h4 className="text-xs sm:text-sm font-semibold">{testimonial.customer_name}</h4>
                   {testimonial.company && (
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">
                       {testimonial.designation && `${testimonial.designation}, `}
                       {testimonial.company}
                     </p>

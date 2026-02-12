@@ -72,7 +72,7 @@ export function HeroSection() {
   const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + cards.length) % cards.length);
 
   return (
-    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-background via-background to-muted">
+    <section className="relative min-h-[55vh] sm:min-h-[70vh] lg:min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-background via-background to-muted">
       {/* Animated Background Pattern */}
       <motion.div
         className="absolute inset-0 opacity-5"
@@ -84,8 +84,8 @@ export function HeroSection() {
         }} />
       </motion.div>
 
-      <div className="container mx-auto px-4 py-20 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <div className="container mx-auto px-4 py-8 sm:py-14 lg:py-20 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-10 lg:gap-20 items-center">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -97,7 +97,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6"
+              className="inline-block px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mb-3 sm:mb-6"
             >
               25+ Years of Excellence
             </motion.span>
@@ -106,7 +106,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6"
+              className="text-2xl sm:text-4xl lg:text-6xl font-display font-bold leading-tight mb-3 sm:mb-6"
             >
               Crafting{' '}
               <span className="text-gradient">Premium</span>{' '}
@@ -117,7 +117,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto lg:mx-0"
+              className="text-sm sm:text-base lg:text-lg text-muted-foreground mb-4 sm:mb-8 max-w-xl mx-auto lg:mx-0"
             >
               Transform your spaces with our exquisite collection of granite, marble, 
               and premium stone products. Expert craftsmanship meets timeless elegance.
@@ -127,29 +127,21 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+              className="flex flex-row flex-wrap gap-2 sm:gap-4 justify-center lg:justify-start"
             >
-              <Button size="lg" asChild className="group">
+              <Button size="default" asChild className="group text-xs sm:text-sm">
                 <Link to="/products">
                   Browse Products
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
+              <Button size="default" variant="outline" asChild className="text-xs sm:text-sm">
                 <Link to="/estimation">Get Free Estimation</Link>
               </Button>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="flex justify-center lg:justify-start mt-3"
-            >
-              <Button size="lg" variant="outline" asChild className="border-primary/30 text-primary" data-testid="button-visualizer-cta">
+              <Button size="default" variant="outline" asChild className="border-primary/30 text-primary text-xs sm:text-sm" data-testid="button-visualizer-cta">
                 <Link to="/visualizer">
-                  <Gem className="mr-2 h-4 w-4" />
-                  Try Stone Visualizer
+                  <Gem className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  Try Visualizer
                 </Link>
               </Button>
             </motion.div>
@@ -160,7 +152,7 @@ export function HeroSection() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative h-[400px] lg:h-[500px]"
+            className="relative h-[250px] sm:h-[350px] lg:h-[500px]"
           >
             <div className="relative w-full h-full">
               {cards.map((card, index) => {

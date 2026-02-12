@@ -89,24 +89,24 @@ export function FeaturedProducts() {
   if (products.length === 0) return null;
 
   return (
-    <section className="section-padding bg-muted/50">
+    <section className="py-8 sm:py-12 lg:py-16 bg-muted/50">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-4 sm:mb-8 lg:mb-12"
         >
-          <span className="text-primary font-medium">Featured Collection</span>
-          <h2 className="text-3xl sm:text-4xl font-display font-bold mt-2 mb-4">
+          <span className="text-primary font-medium text-xs sm:text-sm">Featured Collection</span>
+          <h2 className="text-xl sm:text-3xl lg:text-4xl font-display font-bold mt-1 sm:mt-2 mb-1 sm:mb-4">
             Best Sellers
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-xs sm:text-sm lg:text-base max-w-2xl mx-auto">
             Explore our most popular granite and marble products loved by customers.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
           {products.map((product, index) => (
             <motion.div
               key={product.id}
@@ -114,16 +114,16 @@ export function FeaturedProducts() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.05 }}
-              className="group bg-card rounded-xl overflow-hidden border border-border hover:shadow-lg transition-all"
+              className="group bg-card rounded-lg sm:rounded-xl overflow-hidden border border-border hover:shadow-lg transition-all"
             >
-              <div className="relative aspect-square overflow-hidden">
+              <div className="relative aspect-[4/3] overflow-hidden">
                 <img
                   src={getProductImage(product)}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 {product.compare_price && product.compare_price > product.price && (
-                  <span className="absolute top-3 left-3 px-2 py-1 bg-destructive text-destructive-foreground text-xs font-medium rounded">
+                  <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-destructive text-destructive-foreground text-[10px] sm:text-xs font-medium rounded">
                     {Math.round((1 - product.price / product.compare_price) * 100)}% OFF
                   </span>
                 )}
@@ -131,40 +131,37 @@ export function FeaturedProducts() {
                   <button
                     onClick={() => handleWishlistToggle(product.id)}
                     className={cn(
-                      'absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center transition-colors',
+                      'absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 flex items-center justify-center transition-colors',
                       isInWishlist(product.id) ? 'text-destructive' : 'text-muted-foreground hover:text-destructive'
                     )}
                   >
-                    <Heart className={cn('h-4 w-4', isInWishlist(product.id) && 'fill-current')} />
+                    <Heart className={cn('h-3.5 w-3.5', isInWishlist(product.id) && 'fill-current')} />
                   </button>
                 )}
               </div>
-              <div className="p-4">
+              <div className="p-2.5 sm:p-4">
                 <Link to={`/products/${product.slug}`}>
-                  <h3 className="font-semibold hover:text-primary transition-colors line-clamp-1">
+                  <h3 className="text-xs sm:text-sm font-semibold hover:text-primary transition-colors line-clamp-1">
                     {product.name}
                   </h3>
                 </Link>
-                <p className="text-sm text-muted-foreground line-clamp-1 mt-1">
-                  {product.short_description}
-                </p>
-                <div className="flex items-center justify-between mt-4">
+                <div className="flex items-center justify-between gap-1 mt-1.5 sm:mt-3">
                   <div>
-                    <span className="text-lg font-bold text-primary">
+                    <span className="text-sm sm:text-base font-bold text-primary">
                       {formatPrice(product.price)}
                     </span>
                     {product.compare_price && product.compare_price > product.price && (
-                      <span className="text-sm text-muted-foreground line-through ml-2">
+                      <span className="text-[10px] sm:text-xs text-muted-foreground line-through ml-1">
                         {formatPrice(product.compare_price)}
                       </span>
                     )}
                   </div>
                   <Button
-                    size="sm"
+                    size="icon"
                     variant="outline"
                     onClick={() => handleAddToCart(product)}
                   >
-                    <ShoppingCart className="h-4 w-4" />
+                    <ShoppingCart className="h-3.5 w-3.5" />
                   </Button>
                 </div>
               </div>
@@ -176,9 +173,9 @@ export function FeaturedProducts() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-center mt-10"
+          className="text-center mt-6 sm:mt-10"
         >
-          <Button asChild size="lg">
+          <Button asChild size="default">
             <Link to="/products">
               View All Products
               <ArrowRight className="ml-2 h-4 w-4" />

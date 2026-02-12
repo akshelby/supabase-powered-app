@@ -43,24 +43,24 @@ export function ServicesSection() {
   };
 
   return (
-    <section className="section-padding bg-background">
+    <section className="py-8 sm:py-12 lg:py-16 bg-background">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-4 sm:mb-8 lg:mb-12"
         >
-          <span className="text-primary font-medium">What We Offer</span>
-          <h2 className="text-3xl sm:text-4xl font-display font-bold mt-2 mb-4">
+          <span className="text-primary font-medium text-xs sm:text-sm">What We Offer</span>
+          <h2 className="text-xl sm:text-3xl lg:text-4xl font-display font-bold mt-1 sm:mt-2 mb-1 sm:mb-4">
             Our Services
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-xs sm:text-sm lg:text-base max-w-2xl mx-auto">
             From consultation to installation, we provide end-to-end stone solutions.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
           {services.map((service, index) => (
             <motion.div
               key={service.id}
@@ -68,15 +68,15 @@ export function ServicesSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="group p-6 bg-card rounded-xl border border-border hover:border-primary/50 hover:shadow-lg transition-all"
+              className="group p-3 sm:p-4 lg:p-6 bg-card rounded-lg sm:rounded-xl border border-border hover:border-primary/50 hover:shadow-lg transition-all"
             >
-              <div className="text-4xl mb-4">
+              <div className="text-2xl sm:text-3xl lg:text-4xl mb-2 sm:mb-4">
                 {serviceIcons[service.icon || service.slug] || '🪨'}
               </div>
-              <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+              <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1 sm:mb-2 group-hover:text-primary transition-colors">
                 {service.name}
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
                 {service.short_description}
               </p>
             </motion.div>
@@ -87,7 +87,7 @@ export function ServicesSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-center mt-10"
+          className="text-center mt-6 sm:mt-10"
         >
           <Link
             to="/services"
