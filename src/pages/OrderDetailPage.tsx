@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Package, MapPin, CreditCard, Check } from 'lucide-react';
+import { ChevronLeft, Package, MapPin, CreditCard, Check, Download } from 'lucide-react';
 import { MainLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { Order, OrderItem } from '@/types/database';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const statusColors: Record<string, string> = {
   pending: 'bg-warning text-warning-foreground',
@@ -63,6 +66,106 @@ export default function OrderDetailPage() {
 
   const currentStatusIndex = order ? orderStatuses.indexOf(order.status) : -1;
 
+  const downloadInvoice = () => {
+    if (!order || !items.length) {
+      toast.error('Invoice cannot be generated. Order details are missing.');
+      return;
+    }
+    try {
+    const doc = new jsPDF();
+
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text('SP Granites', 14, 22);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100);
+    doc.text('Premium Stone Works', 14, 28);
+    doc.text('123 Stone Avenue, Industrial Area', 14, 33);
+    doc.text('Chennai, Tamil Nadu 600001', 14, 38);
+    doc.text('Phone: +91 98765 43210', 14, 43);
+
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0);
+    doc.text('INVOICE', 196, 22, { align: 'right' });
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100);
+    doc.text(`Order: ${order.order_number}`, 196, 30, { align: 'right' });
+    doc.text(`Date: ${format(new Date(order.created_at), 'MMM d, yyyy')}`, 196, 35, { align: 'right' });
+    doc.text(`Status: ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}`, 196, 40, { align: 'right' });
+
+    doc.setDrawColor(200);
+    doc.line(14, 48, 196, 48);
+
+    if (order.shipping_address) {
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(0);
+      doc.text('Ship To:', 14, 56);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(60);
+      doc.text(order.shipping_address.full_name || '', 14, 62);
+      doc.text(order.shipping_address.address_line_1 || '', 14, 67);
+      const cityLine = [order.shipping_address.city, order.shipping_address.state, order.shipping_address.pincode].filter(Boolean).join(', ');
+      doc.text(cityLine, 14, 72);
+      if (order.shipping_address.phone) doc.text(`Phone: ${order.shipping_address.phone}`, 14, 77);
+    }
+
+    const tableData = items.map((item) => [
+      item.product_name,
+      item.quantity.toString(),
+      formatPrice(item.unit_price),
+      formatPrice(item.total_price),
+    ]);
+
+    autoTable(doc, {
+      startY: 85,
+      head: [['Product', 'Qty', 'Unit Price', 'Total']],
+      body: tableData,
+      theme: 'striped',
+      headStyles: { fillColor: [200, 155, 60], textColor: 255, fontStyle: 'bold', fontSize: 9 },
+      bodyStyles: { fontSize: 9 },
+      columnStyles: {
+        0: { cellWidth: 90 },
+        1: { halign: 'center', cellWidth: 20 },
+        2: { halign: 'right', cellWidth: 35 },
+        3: { halign: 'right', cellWidth: 35 },
+      },
+    });
+
+    const finalY = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
+    const rightX = 196;
+    doc.setFontSize(9);
+    doc.setTextColor(80);
+    doc.text('Subtotal:', rightX - 40, finalY);
+    doc.text(formatPrice(order.subtotal), rightX, finalY, { align: 'right' });
+    doc.text('Shipping:', rightX - 40, finalY + 6);
+    doc.text(order.shipping_amount === 0 ? 'Free' : formatPrice(order.shipping_amount), rightX, finalY + 6, { align: 'right' });
+    doc.text('Tax:', rightX - 40, finalY + 12);
+    doc.text(formatPrice(order.tax_amount), rightX, finalY + 12, { align: 'right' });
+    doc.setDrawColor(200);
+    doc.line(rightX - 50, finalY + 15, rightX, finalY + 15);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0);
+    doc.text('Total:', rightX - 40, finalY + 22);
+    doc.text(formatPrice(order.total_amount), rightX, finalY + 22, { align: 'right' });
+
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(150);
+    doc.text('Thank you for your business! - SP Granites', 105, 280, { align: 'center' });
+
+    doc.save(`SP-Granites-Invoice-${order.order_number}.pdf`);
+    } catch {
+      toast.error('Failed to generate invoice. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <MainLayout>
@@ -111,9 +214,20 @@ export default function OrderDetailPage() {
               Placed on {format(new Date(order.created_at), 'MMM d, yyyy')}
             </p>
           </div>
-          <Badge className={cn(statusColors[order.status], 'text-xs')} data-testid="badge-order-status">
-            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-          </Badge>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Badge className={cn(statusColors[order.status], 'text-xs')} data-testid="badge-order-status">
+              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+            </Badge>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={downloadInvoice}
+              data-testid="button-download-invoice"
+            >
+              <Download className="h-3.5 w-3.5 mr-1" />
+              Invoice
+            </Button>
+          </div>
         </div>
 
         {order.status !== 'cancelled' && (

@@ -26,6 +26,7 @@ import OrderDetailPage from "./pages/OrderDetailPage";
 import ProfilePage from "./pages/ProfilePage";
 import Auth from "./pages/Auth";
 import StoneVisualizerPage from "./pages/StoneVisualizerPage";
+import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
 
 // Admin Pages
@@ -71,6 +72,7 @@ const App = () => (
                 <Route path="/catalogs" element={<CatalogsPage />} />
                 <Route path="/estimation" element={<EstimationPage />} />
                 <Route path="/visualizer" element={<StoneVisualizerPage />} />
+                <Route path="/about" element={<AboutPage />} />
                 <Route path="/chat" element={<ChatPage />} />
                 <Route path="/auth" element={<Auth />} />
 

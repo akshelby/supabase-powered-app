@@ -26,6 +26,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/estimation': 'Estimation',
   '/catalogs': 'Catalogs',
   '/contact': 'Contact',
+  '/about': 'About Us',
   '/auth': 'Sign In',
   '/cart': 'Cart',
   '/wishlist': 'Wishlist',

@@ -62,13 +62,15 @@ Preferred communication style: Simple, everyday language.
 ### Key Features
 
 1. **Product Catalog** — Browsable products with categories, search, grid/list views, wishlist, and cart
-2. **Shopping Cart** — LocalStorage-persisted cart with quantity management, address selection, and order placement
-3. **Order Management** — Order tracking with status pipeline (pending → processing → shipped → delivered → completed)
-4. **Estimation System** — Multi-step form with drawing canvas, voice recording, image upload for custom stone project quotes
-5. **Live Chat** — WhatsApp-style chat with reference IDs, media support (images, video, audio), real-time updates, conversation history
-6. **Admin Dashboard** — Full CRUD for products, categories, orders, enquiries, estimations, reviews, testimonials, services, catalogs, banners, carousel, locations, users, analytics, and admin chat
-7. **PDF Generation** — jspdf and jspdf-autotable for document generation (likely for estimation reports or invoices)
-8. **Stone Visualizer** — Interactive car-configurator-style tool at `/visualizer` for customizing kitchen countertops, dining tables, and vanity tops with 12 stone colors (granite/marble/quartz), 6 edge profiles, 4 finishes, and live SVG preview. "Request Estimate" CTA passes configuration to the estimation form via URL query params
+2. **Product Reviews** — Customers can rate and review products (reviews require admin approval). Star ratings with averages displayed on product detail pages
+3. **Shopping Cart** — LocalStorage-persisted cart with quantity management, address selection, and order placement
+4. **Order Management** — Order tracking with status pipeline (pending → processing → shipped → delivered → completed)
+5. **Invoice PDF Download** — Customers can download professional PDF invoices from order detail pages using jsPDF + jspdf-autotable
+6. **Estimation System** — Multi-step form with drawing canvas, voice recording, image upload for custom stone project quotes
+7. **Live Chat** — WhatsApp-style chat with reference IDs, media support (images, video, audio), real-time updates, conversation history
+8. **Admin Dashboard** — Full CRUD for products, categories, orders, enquiries, estimations, reviews, testimonials, services, catalogs, banners, carousel, locations, users, analytics, and admin chat
+9. **About Us Page** — Company story, mission, vision, stats, and values at `/about`
+10. **Stone Visualizer** — Interactive car-configurator-style tool at `/visualizer` for customizing kitchen countertops, dining tables, and vanity tops with 12 stone colors (granite/marble/quartz), 6 edge profiles, 4 finishes, and live SVG preview. "Request Estimate" CTA passes configuration to the estimation form via URL query params
 
 ### Dev Server Configuration
 

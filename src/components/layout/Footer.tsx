@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
 
 const quickLinks = [
+  { name: 'About Us', href: '/about' },
   { name: 'Products', href: '/products' },
   { name: 'Services', href: '/services' },
   { name: 'Get Estimation', href: '/estimation' },

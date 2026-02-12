@@ -1,16 +1,28 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Heart, Minus, Plus, ChevronLeft, Star, Check } from 'lucide-react';
+import { ShoppingCart, Heart, Minus, Plus, ChevronLeft, Star, Check, Send } from 'lucide-react';
 import { MainLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { Product } from '@/types/database';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
+import { format } from 'date-fns';
+
+interface ProductReview {
+  id: string;
+  rating: number;
+  review_text: string | null;
+  created_at: string;
+  user_id: string;
+  profiles?: { full_name: string | null; display_name: string | null } | null;
+}
 
 export default function ProductDetailPage() {
   const { slug } = useParams();
@@ -19,6 +31,11 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [reviews, setReviews] = useState<ProductReview[]>([]);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [hoverRating, setHoverRating] = useState(0);
 
   const { addToCart } = useCart();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
@@ -39,6 +56,7 @@ export default function ProductDetailPage() {
 
     if (data) {
       setProduct(data as Product);
+      fetchReviews(data.id);
       const { data: related } = await supabase
         .from('products')
         .select('*')
@@ -49,6 +67,64 @@ export default function ProductDetailPage() {
       if (related) setRelatedProducts(related as Product[]);
     }
     setLoading(false);
+  };
+
+  const fetchReviews = async (productId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('product_reviews')
+        .select('*')
+        .eq('product_id', productId)
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false });
+      if (error || !data) return;
+      if (data.length === 0) { setReviews([]); return; }
+      const userIds = [...new Set(data.map(r => r.user_id))];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, display_name')
+        .in('id', userIds);
+      const profileMap = new Map((profiles || []).map(p => [p.id, p]));
+      setReviews(data.map(r => ({
+        ...r,
+        profiles: profileMap.get(r.user_id) || null,
+      })) as unknown as ProductReview[]);
+    } catch {
+      setReviews([]);
+    }
+  };
+
+  const avgRating = reviews.length > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+    : 0;
+
+  const handleSubmitReview = async () => {
+    if (!user || !product) return;
+    setSubmittingReview(true);
+    try {
+      const { error } = await supabase.from('product_reviews').insert({
+        product_id: product.id,
+        user_id: user.id,
+        rating: reviewRating,
+        review_text: reviewText || null,
+      });
+      if (error) {
+        if (error.code === '23505') {
+          toast.error('You have already reviewed this product.');
+        } else {
+          throw error;
+        }
+      } else {
+        toast.success('Review submitted! It will appear after approval.');
+        setReviewText('');
+        setReviewRating(5);
+        fetchReviews(product.id);
+      }
+    } catch {
+      toast.error('Failed to submit review.');
+    } finally {
+      setSubmittingReview(false);
+    }
   };
 
   const formatPrice = (price: number) => {
@@ -177,12 +253,12 @@ export default function ProductDetailPage() {
                     key={i}
                     className={cn(
                       'h-3.5 w-3.5',
-                      i < 4 ? 'text-primary fill-primary' : 'text-muted'
+                      i < Math.round(avgRating) ? 'text-primary fill-primary' : 'text-muted'
                     )}
                   />
                 ))}
                 <span className="text-xs text-muted-foreground ml-1.5">
-                  (24 reviews)
+                  ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
                 </span>
               </div>
               {product.stock_quantity > 0 ? (
@@ -266,6 +342,9 @@ export default function ProductDetailPage() {
               <TabsList>
                 <TabsTrigger value="description" className="text-xs sm:text-sm" data-testid="tab-description">Description</TabsTrigger>
                 <TabsTrigger value="specifications" className="text-xs sm:text-sm" data-testid="tab-specifications">Specifications</TabsTrigger>
+                <TabsTrigger value="reviews" className="text-xs sm:text-sm" data-testid="tab-reviews">
+                  Reviews ({reviews.length})
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="description" className="mt-3">
                 <p className="text-xs sm:text-sm text-muted-foreground whitespace-pre-wrap">
@@ -286,6 +365,104 @@ export default function ProductDetailPage() {
                   </table>
                 ) : (
                   <p className="text-xs sm:text-sm text-muted-foreground">No specifications available.</p>
+                )}
+              </TabsContent>
+              <TabsContent value="reviews" className="mt-3 space-y-4">
+                {user && (
+                  <div className="bg-muted/30 border border-border rounded-lg p-3 sm:p-4" data-testid="form-review">
+                    <h4 className="text-sm font-semibold mb-2">Write a Review</h4>
+                    <div className="flex items-center gap-1 mb-2">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => setReviewRating(i + 1)}
+                          onMouseEnter={() => setHoverRating(i + 1)}
+                          onMouseLeave={() => setHoverRating(0)}
+                          data-testid={`button-star-${i + 1}`}
+                        >
+                          <Star
+                            className={cn(
+                              'h-5 w-5 transition-colors',
+                              i < (hoverRating || reviewRating)
+                                ? 'text-primary fill-primary'
+                                : 'text-muted'
+                            )}
+                          />
+                        </button>
+                      ))}
+                      <span className="text-xs text-muted-foreground ml-1">
+                        {reviewRating}/5
+                      </span>
+                    </div>
+                    <Textarea
+                      value={reviewText}
+                      onChange={(e) => setReviewText(e.target.value)}
+                      placeholder="Share your experience with this product..."
+                      rows={3}
+                      className="mb-2 text-sm"
+                      data-testid="input-review-text"
+                    />
+                    <Button
+                      size="sm"
+                      onClick={handleSubmitReview}
+                      disabled={submittingReview}
+                      data-testid="button-submit-review"
+                    >
+                      <Send className="h-3.5 w-3.5 mr-1" />
+                      {submittingReview ? 'Submitting...' : 'Submit Review'}
+                    </Button>
+                  </div>
+                )}
+                {!user && (
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    <Link to="/auth" className="underline font-medium" data-testid="link-login-review">Sign in</Link> to write a review.
+                  </p>
+                )}
+                {reviews.length > 0 ? (
+                  <div className="space-y-3">
+                    {reviews.map((review) => (
+                      <div
+                        key={review.id}
+                        className="border-b border-border pb-3 last:border-0"
+                        data-testid={`review-${review.id}`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold">
+                              {(review.profiles?.display_name || review.profiles?.full_name || 'U').charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                              <p className="text-xs sm:text-sm font-medium">
+                                {review.profiles?.display_name || review.profiles?.full_name || 'Customer'}
+                              </p>
+                              <div className="flex items-center gap-1">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    className={cn(
+                                      'h-3 w-3',
+                                      i < review.rating ? 'text-primary fill-primary' : 'text-muted'
+                                    )}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <span className="text-[10px] text-muted-foreground">
+                            {format(new Date(review.created_at), 'MMM d, yyyy')}
+                          </span>
+                        </div>
+                        {review.review_text && (
+                          <p className="text-xs sm:text-sm text-muted-foreground mt-1 ml-9">
+                            {review.review_text}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs sm:text-sm text-muted-foreground">No reviews yet. Be the first to review this product!</p>
                 )}
               </TabsContent>
             </Tabs>
