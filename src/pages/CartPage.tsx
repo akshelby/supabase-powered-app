@@ -1,18 +1,58 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, MapPin, Home, Building2, MapPinned, Check, Edit, X } from 'lucide-react';
 import { MainLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Address } from '@/types/database';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+
+const addressSchema = z.object({
+  label: z.string().optional(),
+  full_name: z.string().min(2, 'Name is required'),
+  phone: z.string().min(10, 'Valid phone required'),
+  address_line_1: z.string().min(5, 'Address is required'),
+  address_line_2: z.string().optional(),
+  city: z.string().min(2, 'City is required'),
+  state: z.string().min(2, 'State is required'),
+  pincode: z.string().min(6, 'Valid pincode required'),
+  address_type: z.enum(['home', 'office', 'other']).optional(),
+  is_default: z.boolean().optional(),
+});
+
+type AddressFormData = z.infer<typeof addressSchema>;
+
+const addressTypeOptions = [
+  { value: 'home' as const, label: 'Home', icon: Home },
+  { value: 'office' as const, label: 'Office', icon: Building2 },
+  { value: 'other' as const, label: 'Other', icon: MapPinned },
+];
 
 export default function CartPage() {
   const { items, updateQuantity, removeFromCart, getCartTotal, clearCart } = useCart();
@@ -22,6 +62,24 @@ export default function CartPage() {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [addressDialogOpen, setAddressDialogOpen] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<Address | null>(null);
+
+  const addressForm = useForm<AddressFormData>({
+    resolver: zodResolver(addressSchema),
+    defaultValues: {
+      label: '',
+      full_name: '',
+      phone: '',
+      address_line_1: '',
+      address_line_2: '',
+      city: '',
+      state: '',
+      pincode: '',
+      address_type: 'home',
+      is_default: false,
+    },
+  });
 
   useEffect(() => {
     if (user) fetchAddresses();
@@ -32,12 +90,120 @@ export default function CartPage() {
       .from('addresses')
       .select('*')
       .eq('user_id', user?.id)
-      .order('is_default', { ascending: false });
+      .order('is_default', { ascending: false })
+      .order('created_at', { ascending: false });
 
     if (data) {
       setAddresses(data as Address[]);
       const defaultAddr = data.find((a) => a.is_default);
       if (defaultAddr) setSelectedAddressId(defaultAddr.id);
+      else if (data.length > 0) setSelectedAddressId(data[0].id);
+    }
+  };
+
+  const onAddressSubmit = async (data: AddressFormData) => {
+    try {
+      if (data.is_default) {
+        await supabase
+          .from('addresses')
+          .update({ is_default: false })
+          .eq('user_id', user?.id);
+      }
+
+      if (editingAddress) {
+        const { error } = await supabase
+          .from('addresses')
+          .update({ ...data, country: 'India' })
+          .eq('id', editingAddress.id);
+        if (error) throw error;
+        toast.success('Address updated');
+      } else {
+        const isFirst = addresses.length === 0;
+        const { data: newAddr, error } = await supabase
+          .from('addresses')
+          .insert({
+            ...data,
+            user_id: user?.id,
+            country: 'India',
+            is_default: isFirst ? true : data.is_default,
+          } as any)
+          .select()
+          .single();
+        if (error) throw error;
+        toast.success('Address added');
+        if (newAddr) setSelectedAddressId(newAddr.id);
+      }
+      setAddressDialogOpen(false);
+      setEditingAddress(null);
+      addressForm.reset();
+      fetchAddresses();
+    } catch {
+      toast.error('Failed to save address');
+    }
+  };
+
+  const openNewAddress = () => {
+    setEditingAddress(null);
+    addressForm.reset({
+      label: '',
+      full_name: '',
+      phone: '',
+      address_line_1: '',
+      address_line_2: '',
+      city: '',
+      state: '',
+      pincode: '',
+      address_type: 'home',
+      is_default: false,
+    });
+    setAddressDialogOpen(true);
+  };
+
+  const openEditAddress = (address: Address) => {
+    setEditingAddress(address);
+    addressForm.reset({
+      label: address.label || '',
+      full_name: address.full_name,
+      phone: address.phone,
+      address_line_1: address.address_line_1,
+      address_line_2: address.address_line_2 || '',
+      city: address.city,
+      state: address.state,
+      pincode: address.pincode,
+      address_type: address.address_type || 'home',
+      is_default: address.is_default,
+    });
+    setAddressDialogOpen(true);
+  };
+
+  const deleteAddress = async (id: string) => {
+    try {
+      await supabase.from('addresses').delete().eq('id', id);
+      toast.success('Address removed');
+      const { data } = await supabase
+        .from('addresses')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('is_default', { ascending: false })
+        .order('created_at', { ascending: false });
+      if (data) {
+        setAddresses(data as Address[]);
+        const defaultAddr = data.find((a) => a.is_default);
+        setSelectedAddressId(defaultAddr?.id || data[0]?.id || '');
+      } else {
+        setAddresses([]);
+        setSelectedAddressId('');
+      }
+    } catch {
+      toast.error('Failed to delete address');
+    }
+  };
+
+  const getAddressTypeIcon = (type?: string) => {
+    switch (type) {
+      case 'office': return Building2;
+      case 'other': return MapPinned;
+      default: return Home;
     }
   };
 
@@ -100,7 +266,7 @@ export default function CartPage() {
       clearCart();
       toast.success('Order placed successfully!');
       navigate(`/orders/${order.id}`);
-    } catch (error) {
+    } catch {
       toast.error('Failed to place order. Please try again.');
     } finally {
       setIsPlacingOrder(false);
@@ -206,17 +372,43 @@ export default function CartPage() {
 
           <div className="space-y-3 sm:space-y-4">
             <Card>
-              <CardHeader className="py-3 px-4">
-                <CardTitle className="text-sm sm:text-base">Delivery Address</CardTitle>
+              <CardHeader className="py-3 px-4 flex flex-row items-center justify-between gap-2">
+                <CardTitle className="text-sm sm:text-base flex items-center gap-1.5">
+                  <MapPin className="h-4 w-4" />
+                  Delivery Address
+                </CardTitle>
+                {user && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={openNewAddress}
+                    data-testid="button-add-address-cart"
+                  >
+                    <Plus className="h-3.5 w-3.5 mr-1" />
+                    Add New
+                  </Button>
+                )}
               </CardHeader>
               <CardContent className="px-4 pb-3">
-                {addresses.length === 0 ? (
-                  <div className="text-center py-3">
+                {!user ? (
+                  <div className="text-center py-4">
                     <p className="text-muted-foreground text-xs mb-2">
-                      No addresses saved
+                      Please sign in to add a delivery address
                     </p>
-                    <Button variant="outline" size="sm" asChild data-testid="button-add-address">
-                      <Link to="/profile">Add Address</Link>
+                    <Button variant="outline" size="sm" asChild data-testid="button-signin-address">
+                      <Link to="/auth">Sign In</Link>
+                    </Button>
+                  </div>
+                ) : addresses.length === 0 ? (
+                  <div className="text-center py-4">
+                    <MapPin className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                    <p className="text-sm font-medium mb-1">No addresses saved</p>
+                    <p className="text-muted-foreground text-xs mb-3">
+                      Add a delivery address to place your order
+                    </p>
+                    <Button size="sm" onClick={openNewAddress} data-testid="button-add-first-address-cart">
+                      <Plus className="h-3.5 w-3.5 mr-1" />
+                      Add Address
                     </Button>
                   </div>
                 ) : (
@@ -225,22 +417,69 @@ export default function CartPage() {
                     onValueChange={setSelectedAddressId}
                     className="space-y-2"
                   >
-                    {addresses.map((address) => (
-                      <div
-                        key={address.id}
-                        className="flex items-start space-x-2 p-2 rounded-md border border-border hover-elevate cursor-pointer"
-                        onClick={() => setSelectedAddressId(address.id!)}
-                        data-testid={`radio-address-${address.id}`}
-                      >
-                        <RadioGroupItem value={address.id!} id={address.id} />
-                        <Label htmlFor={address.id} className="cursor-pointer flex-1 text-xs">
-                          <p className="font-medium text-sm">{address.full_name}</p>
-                          <p className="text-muted-foreground">
-                            {address.address_line_1}, {address.city} - {address.pincode}
-                          </p>
-                        </Label>
-                      </div>
-                    ))}
+                    {addresses.map((address) => {
+                      const TypeIcon = getAddressTypeIcon(address.address_type);
+                      const isSelected = selectedAddressId === address.id;
+                      return (
+                        <div
+                          key={address.id}
+                          className={cn(
+                            'relative p-2.5 rounded-md border cursor-pointer transition-colors',
+                            isSelected ? 'border-primary bg-primary/5' : 'border-border'
+                          )}
+                          onClick={() => setSelectedAddressId(address.id!)}
+                          data-testid={`radio-address-${address.id}`}
+                        >
+                          <div className="flex items-start gap-2">
+                            <RadioGroupItem value={address.id!} id={address.id} className="mt-0.5" />
+                            <Label htmlFor={address.id} className="cursor-pointer flex-1 space-y-0.5">
+                              <div className="flex items-center gap-1.5 mb-0.5">
+                                <TypeIcon className="h-3 w-3 text-muted-foreground" />
+                                <span className="text-[10px] uppercase tracking-wide font-semibold text-muted-foreground">
+                                  {address.label || address.address_type || 'Home'}
+                                </span>
+                                {address.is_default && (
+                                  <span className="text-[9px] bg-primary/10 text-primary px-1 py-0.5 rounded font-medium">
+                                    Default
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-sm font-medium">{address.full_name}</p>
+                              <p className="text-xs text-muted-foreground leading-relaxed">
+                                {address.address_line_1}
+                                {address.address_line_2 && `, ${address.address_line_2}`}
+                                , {address.city} - {address.pincode}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {address.phone}
+                              </p>
+                            </Label>
+                          </div>
+                          <div className="flex items-center gap-1 mt-1.5 ml-6">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 text-[10px] px-1.5"
+                              onClick={(e) => { e.stopPropagation(); openEditAddress(address); }}
+                              data-testid={`button-edit-addr-${address.id}`}
+                            >
+                              <Edit className="h-2.5 w-2.5 mr-0.5" />
+                              Edit
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 text-[10px] px-1.5 text-destructive"
+                              onClick={(e) => { e.stopPropagation(); deleteAddress(address.id!); }}
+                              data-testid={`button-del-addr-${address.id}`}
+                            >
+                              <Trash2 className="h-2.5 w-2.5 mr-0.5" />
+                              Remove
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </RadioGroup>
                 )}
               </CardContent>
@@ -251,19 +490,19 @@ export default function CartPage() {
                 <CardTitle className="text-sm sm:text-base">Order Summary</CardTitle>
               </CardHeader>
               <CardContent className="px-4 pb-3 space-y-2">
-                <div className="flex justify-between text-xs sm:text-sm">
+                <div className="flex justify-between gap-1 text-xs sm:text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
                   <span>{formatPrice(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-xs sm:text-sm">
+                <div className="flex justify-between gap-1 text-xs sm:text-sm">
                   <span className="text-muted-foreground">Shipping</span>
                   <span>{shipping === 0 ? 'Free' : formatPrice(shipping)}</span>
                 </div>
-                <div className="flex justify-between text-xs sm:text-sm">
+                <div className="flex justify-between gap-1 text-xs sm:text-sm">
                   <span className="text-muted-foreground">Tax (18% GST)</span>
                   <span>{formatPrice(tax)}</span>
                 </div>
-                <div className="border-t pt-2 flex justify-between font-semibold text-base sm:text-lg">
+                <div className="border-t pt-2 flex justify-between gap-1 font-semibold text-base sm:text-lg">
                   <span>Total</span>
                   <span className="text-primary" data-testid="text-order-total">{formatPrice(total)}</span>
                 </div>
@@ -271,7 +510,7 @@ export default function CartPage() {
                   className="w-full"
                   size="default"
                   onClick={handlePlaceOrder}
-                  disabled={isPlacingOrder || addresses.length === 0}
+                  disabled={isPlacingOrder || !selectedAddressId || !user}
                   data-testid="button-place-order"
                 >
                   {isPlacingOrder ? (
@@ -293,6 +532,190 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+
+      <Dialog open={addressDialogOpen} onOpenChange={(open) => {
+        setAddressDialogOpen(open);
+        if (!open) {
+          setEditingAddress(null);
+          addressForm.reset();
+        }
+      }}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-base sm:text-lg">
+              {editingAddress ? 'Edit Address' : 'Add Delivery Address'}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              {editingAddress ? 'Update your delivery address details' : 'Enter your delivery address to continue with your order'}
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...addressForm}>
+            <form onSubmit={addressForm.handleSubmit(onAddressSubmit)} className="space-y-4">
+              <FormField
+                control={addressForm.control}
+                name="address_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address Type</FormLabel>
+                    <div className="flex gap-2">
+                      {addressTypeOptions.map((opt) => (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => field.onChange(opt.value)}
+                          className={cn(
+                            'flex items-center gap-1.5 px-3 py-2 rounded-md border text-sm transition-colors',
+                            field.value === opt.value
+                              ? 'border-primary bg-primary/5 font-medium'
+                              : 'border-border'
+                          )}
+                          data-testid={`button-cart-type-${opt.value}`}
+                        >
+                          <opt.icon className="h-3.5 w-3.5" />
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={addressForm.control}
+                name="label"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Label (optional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., Mom's House, Site Office" {...field} data-testid="input-cart-addr-label" />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-2 gap-3">
+                <FormField
+                  control={addressForm.control}
+                  name="full_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name *</FormLabel>
+                      <FormControl>
+                        <Input {...field} data-testid="input-cart-addr-name" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={addressForm.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone *</FormLabel>
+                      <FormControl>
+                        <Input {...field} data-testid="input-cart-addr-phone" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={addressForm.control}
+                name="address_line_1"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address Line 1 *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="House/Flat No., Building, Street" {...field} data-testid="input-cart-addr-line1" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={addressForm.control}
+                name="address_line_2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address Line 2</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Area, Landmark (optional)" {...field} data-testid="input-cart-addr-line2" />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-3 gap-3">
+                <FormField
+                  control={addressForm.control}
+                  name="city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>City *</FormLabel>
+                      <FormControl>
+                        <Input {...field} data-testid="input-cart-addr-city" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={addressForm.control}
+                  name="state"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>State *</FormLabel>
+                      <FormControl>
+                        <Input {...field} data-testid="input-cart-addr-state" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={addressForm.control}
+                  name="pincode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Pincode *</FormLabel>
+                      <FormControl>
+                        <Input {...field} data-testid="input-cart-addr-pincode" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={addressForm.control}
+                name="is_default"
+                render={({ field }) => (
+                  <FormItem>
+                    <div
+                      className={cn(
+                        'flex items-center gap-2 p-2.5 rounded-md border cursor-pointer transition-colors',
+                        field.value ? 'border-primary bg-primary/5' : 'border-border'
+                      )}
+                      onClick={() => field.onChange(!field.value)}
+                      data-testid="toggle-cart-default-address"
+                    >
+                      <div className={cn(
+                        'w-4 h-4 rounded-sm border flex items-center justify-center shrink-0',
+                        field.value ? 'bg-primary border-primary' : 'border-muted-foreground/40'
+                      )}>
+                        {field.value && <Check className="h-3 w-3 text-primary-foreground" />}
+                      </div>
+                      <span className="text-sm">Set as default delivery address</span>
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="w-full" data-testid="button-cart-save-address">
+                {editingAddress ? 'Update Address' : 'Save & Use This Address'}
+              </Button>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   );
 }

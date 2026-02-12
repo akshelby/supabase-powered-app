@@ -18,26 +18,23 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, MapPin, Lock, Plus, Trash2, Edit } from 'lucide-react';
+import { User, MapPin, Lock, Plus, Trash2, Edit, Home, Building2, MapPinned, Star, Check } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Profile, Address } from '@/types/database';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 const profileSchema = z.object({
   full_name: z.string().min(2, 'Name is required'),
   phone: z.string().optional(),
   alternate_phone: z.string().optional(),
-  address_line_1: z.string().optional(),
-  address_line_2: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  pincode: z.string().optional(),
   company_name: z.string().optional(),
   gst_number: z.string().optional(),
 });
@@ -51,11 +48,18 @@ const addressSchema = z.object({
   city: z.string().min(2, 'City is required'),
   state: z.string().min(2, 'State is required'),
   pincode: z.string().min(6, 'Valid pincode required'),
+  address_type: z.enum(['home', 'office', 'other']).optional(),
   is_default: z.boolean().optional(),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 type AddressFormData = z.infer<typeof addressSchema>;
+
+const addressTypeOptions = [
+  { value: 'home' as const, label: 'Home', icon: Home },
+  { value: 'office' as const, label: 'Office', icon: Building2 },
+  { value: 'other' as const, label: 'Other', icon: MapPinned },
+];
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
@@ -72,11 +76,6 @@ export default function ProfilePage() {
       full_name: '',
       phone: '',
       alternate_phone: '',
-      address_line_1: '',
-      address_line_2: '',
-      city: '',
-      state: '',
-      pincode: '',
       company_name: '',
       gst_number: '',
     },
@@ -93,6 +92,7 @@ export default function ProfilePage() {
       city: '',
       state: '',
       pincode: '',
+      address_type: 'home',
       is_default: false,
     },
   });
@@ -112,7 +112,8 @@ export default function ProfilePage() {
         .from('addresses')
         .select('*')
         .eq('user_id', user?.id)
-        .order('is_default', { ascending: false }),
+        .order('is_default', { ascending: false })
+        .order('created_at', { ascending: false }),
     ]);
 
     if (profileRes.data) {
@@ -121,11 +122,6 @@ export default function ProfilePage() {
         full_name: profileRes.data.full_name || '',
         phone: profileRes.data.phone || '',
         alternate_phone: profileRes.data.alternate_phone || '',
-        address_line_1: profileRes.data.address_line_1 || '',
-        address_line_2: profileRes.data.address_line_2 || '',
-        city: profileRes.data.city || '',
-        state: profileRes.data.state || '',
-        pincode: profileRes.data.pincode || '',
         company_name: profileRes.data.company_name || '',
         gst_number: profileRes.data.gst_number || '',
       });
@@ -144,7 +140,7 @@ export default function ProfilePage() {
 
       if (error) throw error;
       toast.success('Profile updated successfully');
-    } catch (error) {
+    } catch {
       toast.error('Failed to update profile');
     } finally {
       setSaving(false);
@@ -153,6 +149,13 @@ export default function ProfilePage() {
 
   const onAddressSubmit = async (data: AddressFormData) => {
     try {
+      if (data.is_default) {
+        await supabase
+          .from('addresses')
+          .update({ is_default: false })
+          .eq('user_id', user?.id);
+      }
+
       if (editingAddress) {
         const { error } = await supabase
           .from('addresses')
@@ -161,17 +164,34 @@ export default function ProfilePage() {
         if (error) throw error;
         toast.success('Address updated');
       } else {
+        const isFirst = addresses.length === 0;
         const { error } = await supabase
           .from('addresses')
-          .insert({ ...data, user_id: user?.id, country: 'India' } as any);
+          .insert({
+            ...data,
+            user_id: user?.id,
+            country: 'India',
+            is_default: isFirst ? true : data.is_default,
+          } as any);
         if (error) throw error;
         toast.success('Address added');
       }
       setAddressDialogOpen(false);
       setEditingAddress(null);
-      addressForm.reset();
+      addressForm.reset({
+        label: '',
+        full_name: '',
+        phone: '',
+        address_line_1: '',
+        address_line_2: '',
+        city: '',
+        state: '',
+        pincode: '',
+        address_type: 'home',
+        is_default: false,
+      });
       fetchData();
-    } catch (error) {
+    } catch {
       toast.error('Failed to save address');
     }
   };
@@ -181,8 +201,25 @@ export default function ProfilePage() {
       await supabase.from('addresses').delete().eq('id', id);
       toast.success('Address deleted');
       fetchData();
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete address');
+    }
+  };
+
+  const setDefaultAddress = async (id: string) => {
+    try {
+      await supabase
+        .from('addresses')
+        .update({ is_default: false })
+        .eq('user_id', user?.id);
+      await supabase
+        .from('addresses')
+        .update({ is_default: true })
+        .eq('id', id);
+      toast.success('Default address updated');
+      fetchData();
+    } catch {
+      toast.error('Failed to set default address');
     }
   };
 
@@ -197,15 +234,41 @@ export default function ProfilePage() {
       city: address.city,
       state: address.state,
       pincode: address.pincode,
+      address_type: address.address_type || 'home',
       is_default: address.is_default,
     });
     setAddressDialogOpen(true);
   };
 
+  const openNewAddress = () => {
+    setEditingAddress(null);
+    addressForm.reset({
+      label: '',
+      full_name: profile?.full_name || '',
+      phone: profile?.phone || '',
+      address_line_1: '',
+      address_line_2: '',
+      city: '',
+      state: '',
+      pincode: '',
+      address_type: 'home',
+      is_default: false,
+    });
+    setAddressDialogOpen(true);
+  };
+
+  const getAddressTypeIcon = (type?: string) => {
+    switch (type) {
+      case 'office': return Building2;
+      case 'other': return MapPinned;
+      default: return Home;
+    }
+  };
+
   if (loading) {
     return (
       <MainLayout>
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
           <div className="h-8 w-48 bg-muted animate-pulse rounded mb-8" />
           <div className="h-96 bg-muted animate-pulse rounded-xl" />
         </div>
@@ -215,36 +278,37 @@ export default function ProfilePage() {
 
   return (
     <MainLayout>
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-display font-bold mb-8">My Profile</h1>
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold mb-4 sm:mb-6" data-testid="text-profile-title">
+          My Profile
+        </h1>
 
-        <Tabs defaultValue="profile" className="space-y-6">
+        <Tabs defaultValue="profile" className="space-y-4 sm:space-y-6">
           <TabsList>
-            <TabsTrigger value="profile">
-              <User className="h-4 w-4 mr-2" />
+            <TabsTrigger value="profile" data-testid="tab-profile">
+              <User className="h-4 w-4 mr-1.5" />
               Profile
             </TabsTrigger>
-            <TabsTrigger value="addresses">
-              <MapPin className="h-4 w-4 mr-2" />
-              Addresses
+            <TabsTrigger value="addresses" data-testid="tab-addresses">
+              <MapPin className="h-4 w-4 mr-1.5" />
+              Addresses ({addresses.length})
             </TabsTrigger>
-            <TabsTrigger value="security">
-              <Lock className="h-4 w-4 mr-2" />
+            <TabsTrigger value="security" data-testid="tab-security">
+              <Lock className="h-4 w-4 mr-1.5" />
               Security
             </TabsTrigger>
           </TabsList>
 
-          {/* Profile Tab */}
           <TabsContent value="profile">
             <Card>
               <CardHeader>
-                <CardTitle>Personal Information</CardTitle>
-                <CardDescription>Update your personal details</CardDescription>
+                <CardTitle className="text-base sm:text-lg">Personal Information</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">Update your personal details</CardDescription>
               </CardHeader>
               <CardContent>
                 <Form {...profileForm}>
-                  <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-6">
-                    <div className="grid sm:grid-cols-2 gap-6">
+                  <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-4 sm:space-y-6">
+                    <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                       <FormField
                         control={profileForm.control}
                         name="full_name"
@@ -252,7 +316,7 @@ export default function ProfilePage() {
                           <FormItem>
                             <FormLabel>Full Name</FormLabel>
                             <FormControl>
-                              <Input {...field} />
+                              <Input {...field} data-testid="input-profile-name" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -265,7 +329,7 @@ export default function ProfilePage() {
                           <FormItem>
                             <FormLabel>Phone</FormLabel>
                             <FormControl>
-                              <Input {...field} />
+                              <Input {...field} data-testid="input-profile-phone" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -278,7 +342,7 @@ export default function ProfilePage() {
                           <FormItem>
                             <FormLabel>Company Name</FormLabel>
                             <FormControl>
-                              <Input {...field} />
+                              <Input {...field} data-testid="input-profile-company" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -291,14 +355,14 @@ export default function ProfilePage() {
                           <FormItem>
                             <FormLabel>GST Number</FormLabel>
                             <FormControl>
-                              <Input {...field} />
+                              <Input {...field} data-testid="input-profile-gst" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
                     </div>
-                    <Button type="submit" disabled={saving}>
+                    <Button type="submit" disabled={saving} data-testid="button-save-profile">
                       {saving ? 'Saving...' : 'Save Changes'}
                     </Button>
                   </form>
@@ -307,224 +371,341 @@ export default function ProfilePage() {
             </Card>
           </TabsContent>
 
-          {/* Addresses Tab */}
           <TabsContent value="addresses">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
                 <div>
-                  <CardTitle>Saved Addresses</CardTitle>
-                  <CardDescription>Manage your delivery addresses</CardDescription>
+                  <h2 className="text-base sm:text-lg font-semibold">Saved Addresses</h2>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Manage your delivery addresses</p>
                 </div>
-                <Dialog open={addressDialogOpen} onOpenChange={(open) => {
-                  setAddressDialogOpen(open);
-                  if (!open) {
-                    setEditingAddress(null);
-                    addressForm.reset();
-                  }
-                }}>
-                  <DialogTrigger asChild>
-                    <Button size="sm">
-                      <Plus className="h-4 w-4 mr-2" />
+                <Button size="sm" onClick={openNewAddress} data-testid="button-add-address">
+                  <Plus className="h-4 w-4 mr-1.5" />
+                  Add New Address
+                </Button>
+              </div>
+
+              {addresses.length === 0 ? (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <MapPin className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
+                    <p className="text-sm font-medium mb-1">No addresses saved yet</p>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      Add your first delivery address to get started
+                    </p>
+                    <Button size="sm" onClick={openNewAddress} data-testid="button-add-first-address">
+                      <Plus className="h-4 w-4 mr-1.5" />
                       Add Address
                     </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>
-                        {editingAddress ? 'Edit Address' : 'Add New Address'}
-                      </DialogTitle>
-                    </DialogHeader>
-                    <Form {...addressForm}>
-                      <form onSubmit={addressForm.handleSubmit(onAddressSubmit)} className="space-y-4">
-                        <FormField
-                          control={addressForm.control}
-                          name="label"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Label (e.g., Home, Office)</FormLabel>
-                              <FormControl>
-                                <Input {...field} />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                        <div className="grid grid-cols-2 gap-4">
-                          <FormField
-                            control={addressForm.control}
-                            name="full_name"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Full Name *</FormLabel>
-                                <FormControl>
-                                  <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={addressForm.control}
-                            name="phone"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Phone *</FormLabel>
-                                <FormControl>
-                                  <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                        <FormField
-                          control={addressForm.control}
-                          name="address_line_1"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Address Line 1 *</FormLabel>
-                              <FormControl>
-                                <Input {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={addressForm.control}
-                          name="address_line_2"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Address Line 2</FormLabel>
-                              <FormControl>
-                                <Input {...field} />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                        <div className="grid grid-cols-3 gap-4">
-                          <FormField
-                            control={addressForm.control}
-                            name="city"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>City *</FormLabel>
-                                <FormControl>
-                                  <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={addressForm.control}
-                            name="state"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>State *</FormLabel>
-                                <FormControl>
-                                  <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={addressForm.control}
-                            name="pincode"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Pincode *</FormLabel>
-                                <FormControl>
-                                  <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                        <Button type="submit" className="w-full">
-                          {editingAddress ? 'Update Address' : 'Add Address'}
-                        </Button>
-                      </form>
-                    </Form>
-                  </DialogContent>
-                </Dialog>
-              </CardHeader>
-              <CardContent>
-                {addresses.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-8">
-                    No addresses saved yet
-                  </p>
-                ) : (
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    {addresses.map((address) => (
-                      <div
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {addresses.map((address) => {
+                    const TypeIcon = getAddressTypeIcon(address.address_type);
+                    return (
+                      <Card
                         key={address.id}
-                        className="p-4 border rounded-lg relative"
-                      >
-                        {address.is_default && (
-                          <span className="absolute top-2 right-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
-                            Default
-                          </span>
+                        className={cn(
+                          'relative',
+                          address.is_default && 'border-primary/50'
                         )}
-                        <h4 className="font-medium">
-                          {address.label || address.full_name}
-                        </h4>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {address.address_line_1}
-                          {address.address_line_2 && `, ${address.address_line_2}`}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {address.city}, {address.state} - {address.pincode}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {address.phone}
-                        </p>
-                        <div className="flex gap-2 mt-3">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => openEditAddress(address)}
-                          >
-                            <Edit className="h-3 w-3 mr-1" />
-                            Edit
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-destructive"
-                            onClick={() => deleteAddress(address.id!)}
-                          >
-                            <Trash2 className="h-3 w-3 mr-1" />
-                            Delete
-                          </Button>
-                        </div>
+                        data-testid={`card-address-${address.id}`}
+                      >
+                        <CardContent className="p-3 sm:p-4">
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <div className="flex items-center gap-2">
+                              <div className={cn(
+                                'w-7 h-7 rounded-md flex items-center justify-center shrink-0',
+                                address.address_type === 'office' ? 'bg-blue-100 dark:bg-blue-900/30' : 
+                                address.address_type === 'other' ? 'bg-purple-100 dark:bg-purple-900/30' : 
+                                'bg-green-100 dark:bg-green-900/30'
+                              )}>
+                                <TypeIcon className={cn(
+                                  'h-3.5 w-3.5',
+                                  address.address_type === 'office' ? 'text-blue-600 dark:text-blue-400' :
+                                  address.address_type === 'other' ? 'text-purple-600 dark:text-purple-400' :
+                                  'text-green-600 dark:text-green-400'
+                                )} />
+                              </div>
+                              <div>
+                                <span className="text-xs font-semibold uppercase tracking-wide">
+                                  {address.label || address.address_type || 'Home'}
+                                </span>
+                                {address.is_default && (
+                                  <span className="ml-2 text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-medium">
+                                    Default
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          <p className="text-sm font-medium">{address.full_name}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                            {address.address_line_1}
+                            {address.address_line_2 && `, ${address.address_line_2}`}
+                            <br />
+                            {address.city}, {address.state} - {address.pincode}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Phone: {address.phone}
+                          </p>
+
+                          <div className="flex items-center gap-1.5 mt-3 flex-wrap">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openEditAddress(address)}
+                              data-testid={`button-edit-address-${address.id}`}
+                            >
+                              <Edit className="h-3 w-3 mr-1" />
+                              Edit
+                            </Button>
+                            {!address.is_default && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setDefaultAddress(address.id!)}
+                                data-testid={`button-default-address-${address.id}`}
+                              >
+                                <Star className="h-3 w-3 mr-1" />
+                                Set Default
+                              </Button>
+                            )}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-destructive"
+                              onClick={() => deleteAddress(address.id!)}
+                              data-testid={`button-delete-address-${address.id}`}
+                            >
+                              <Trash2 className="h-3 w-3 mr-1" />
+                              Delete
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+
+                  <Card
+                    className="border-dashed hover-elevate cursor-pointer"
+                    onClick={openNewAddress}
+                    data-testid="card-add-new-address"
+                  >
+                    <CardContent className="p-4 flex flex-col items-center justify-center h-full min-h-[140px]">
+                      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mb-2">
+                        <Plus className="h-5 w-5 text-muted-foreground" />
                       </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                      <p className="text-sm font-medium text-muted-foreground">Add New Address</p>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+            </div>
+
+            <Dialog open={addressDialogOpen} onOpenChange={(open) => {
+              setAddressDialogOpen(open);
+              if (!open) {
+                setEditingAddress(null);
+                addressForm.reset();
+              }
+            }}>
+              <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-base sm:text-lg">
+                    {editingAddress ? 'Edit Address' : 'Add New Address'}
+                  </DialogTitle>
+                  <DialogDescription className="text-xs text-muted-foreground">
+                    {editingAddress ? 'Update your delivery address details' : 'Enter your delivery address details'}
+                  </DialogDescription>
+                </DialogHeader>
+                <Form {...addressForm}>
+                  <form onSubmit={addressForm.handleSubmit(onAddressSubmit)} className="space-y-4">
+                    <FormField
+                      control={addressForm.control}
+                      name="address_type"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Address Type</FormLabel>
+                          <div className="flex gap-2">
+                            {addressTypeOptions.map((opt) => (
+                              <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() => field.onChange(opt.value)}
+                                className={cn(
+                                  'flex items-center gap-1.5 px-3 py-2 rounded-md border text-sm transition-colors',
+                                  field.value === opt.value
+                                    ? 'border-primary bg-primary/5 font-medium'
+                                    : 'border-border'
+                                )}
+                                data-testid={`button-type-${opt.value}`}
+                              >
+                                <opt.icon className="h-3.5 w-3.5" />
+                                {opt.label}
+                              </button>
+                            ))}
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={addressForm.control}
+                      name="label"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Label (optional)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., Mom's House, Site Office" {...field} data-testid="input-address-label" />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <div className="grid grid-cols-2 gap-3">
+                      <FormField
+                        control={addressForm.control}
+                        name="full_name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Full Name *</FormLabel>
+                            <FormControl>
+                              <Input {...field} data-testid="input-address-name" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={addressForm.control}
+                        name="phone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Phone *</FormLabel>
+                            <FormControl>
+                              <Input {...field} data-testid="input-address-phone" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <FormField
+                      control={addressForm.control}
+                      name="address_line_1"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Address Line 1 *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="House/Flat No., Building, Street" {...field} data-testid="input-address-line1" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={addressForm.control}
+                      name="address_line_2"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Address Line 2</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Area, Landmark (optional)" {...field} data-testid="input-address-line2" />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <div className="grid grid-cols-3 gap-3">
+                      <FormField
+                        control={addressForm.control}
+                        name="city"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>City *</FormLabel>
+                            <FormControl>
+                              <Input {...field} data-testid="input-address-city" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={addressForm.control}
+                        name="state"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>State *</FormLabel>
+                            <FormControl>
+                              <Input {...field} data-testid="input-address-state" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={addressForm.control}
+                        name="pincode"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Pincode *</FormLabel>
+                            <FormControl>
+                              <Input {...field} data-testid="input-address-pincode" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <FormField
+                      control={addressForm.control}
+                      name="is_default"
+                      render={({ field }) => (
+                        <FormItem>
+                          <div
+                            className={cn(
+                              'flex items-center gap-2 p-2.5 rounded-md border cursor-pointer transition-colors',
+                              field.value ? 'border-primary bg-primary/5' : 'border-border'
+                            )}
+                            onClick={() => field.onChange(!field.value)}
+                            data-testid="toggle-default-address"
+                          >
+                            <div className={cn(
+                              'w-4 h-4 rounded-sm border flex items-center justify-center shrink-0',
+                              field.value ? 'bg-primary border-primary' : 'border-muted-foreground/40'
+                            )}>
+                              {field.value && <Check className="h-3 w-3 text-primary-foreground" />}
+                            </div>
+                            <span className="text-sm">Set as default delivery address</span>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" className="w-full" data-testid="button-save-address">
+                      {editingAddress ? 'Update Address' : 'Save Address'}
+                    </Button>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
           </TabsContent>
 
-          {/* Security Tab */}
           <TabsContent value="security">
             <Card>
               <CardHeader>
-                <CardTitle>Account Security</CardTitle>
-                <CardDescription>Manage your account security settings</CardDescription>
+                <CardTitle className="text-base sm:text-lg">Account Security</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">Manage your account security settings</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
-                  <h4 className="font-medium mb-2">Email Address</h4>
-                  <p className="text-muted-foreground">{user?.email}</p>
+                  <h4 className="font-medium text-sm mb-1">Email Address</h4>
+                  <p className="text-sm text-muted-foreground">{user?.email}</p>
                 </div>
                 <div className="border-t pt-6">
-                  <h4 className="font-medium mb-2">Sign Out</h4>
-                  <p className="text-muted-foreground text-sm mb-4">
+                  <h4 className="font-medium text-sm mb-1">Sign Out</h4>
+                  <p className="text-muted-foreground text-xs mb-4">
                     Sign out from your account on this device
                   </p>
-                  <Button variant="outline" onClick={signOut}>
+                  <Button variant="outline" onClick={signOut} data-testid="button-signout">
                     Sign Out
                   </Button>
                 </div>
