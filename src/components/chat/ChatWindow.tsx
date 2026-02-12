@@ -323,16 +323,15 @@ export function ChatWindow({
       {/* Header */}
       <div className="bg-[#001F3F] text-white p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {!showStartScreen && (
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8 text-white/80 hover:text-white hover:bg-white/10"
-              onClick={handleBack}
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-          )}
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8 text-white/80 hover:text-white hover:bg-white/10"
+            onClick={showStartScreen ? onClose : handleBack}
+            data-testid="button-chat-back"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
           <div>
             <h2 className="font-semibold">S P Granites Support</h2>
             {refId && (
