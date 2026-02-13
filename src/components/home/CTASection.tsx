@@ -28,12 +28,12 @@ export function CTASection() {
           <p className="text-sm sm:text-base lg:text-lg opacity-85 mb-4 sm:mb-8">
             {t('cta.subtitle')}
           </p>
-          <div className="flex flex-row flex-wrap gap-2 sm:gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center items-center">
             <Button
-              size="default"
+              size="lg"
               variant="secondary"
               asChild
-              className="group text-xs sm:text-sm"
+              className="group w-full sm:w-auto text-xs sm:text-sm"
               data-testid="button-cta-estimation"
             >
               <Link to="/estimation">
@@ -42,10 +42,10 @@ export function CTASection() {
               </Link>
             </Button>
             <Button
-              size="default"
+              size="lg"
               variant="outline"
               asChild
-              className="border-primary-foreground/30 text-xs sm:text-sm"
+              className="w-full sm:w-auto border-primary-foreground/50 text-primary-foreground text-xs sm:text-sm"
               data-testid="button-cta-call"
             >
               <a href="tel:+919876543210">

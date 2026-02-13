@@ -116,18 +116,18 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45 }}
-              className="flex flex-row flex-wrap gap-2 sm:gap-3 justify-center lg:justify-start"
+              className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 justify-center lg:justify-start items-center sm:items-start"
             >
-              <Button size="default" asChild className="group text-xs sm:text-sm" data-testid="button-browse-products">
+              <Button size="lg" asChild className="group w-full sm:w-auto text-xs sm:text-sm" data-testid="button-browse-products">
                 <Link to="/products">
                   {t('hero.browseProducts')}
                   <ArrowRight className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
-              <Button size="default" variant="outline" asChild className="text-xs sm:text-sm" data-testid="button-free-estimation">
+              <Button size="lg" variant="outline" asChild className="w-full sm:w-auto text-xs sm:text-sm" data-testid="button-free-estimation">
                 <Link to="/estimation">{t('hero.freeEstimation')}</Link>
               </Button>
-              <Button size="default" variant="outline" asChild className="border-primary/30 text-primary text-xs sm:text-sm" data-testid="button-visualizer-cta">
+              <Button size="lg" variant="outline" asChild className="w-full sm:w-auto border-primary/30 text-primary text-xs sm:text-sm" data-testid="button-visualizer-cta">
                 <Link to="/visualizer">
                   <Gem className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   {t('hero.tryVisualizer')}
