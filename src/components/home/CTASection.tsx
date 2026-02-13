@@ -31,9 +31,8 @@ export function CTASection() {
           <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center items-center">
             <Button
               size="lg"
-              variant="secondary"
               asChild
-              className="group w-full sm:w-auto text-xs sm:text-sm"
+              className="group w-full sm:w-auto text-xs sm:text-sm bg-white text-primary border border-white"
               data-testid="button-cta-estimation"
             >
               <Link to="/estimation">
@@ -43,9 +42,8 @@ export function CTASection() {
             </Button>
             <Button
               size="lg"
-              variant="outline"
               asChild
-              className="w-full sm:w-auto border-primary-foreground/50 text-primary-foreground text-xs sm:text-sm"
+              className="w-full sm:w-auto bg-transparent border border-white/60 text-white text-xs sm:text-sm"
               data-testid="button-cta-call"
             >
               <a href="tel:+919876543210">
