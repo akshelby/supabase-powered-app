@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight, Gem } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 
-// Import local images
 import blackGraniteImg from '@/assets/products/black-granite.jpg';
 import kitchenCountertopsImg from '@/assets/categories/kitchen-countertops.jpg';
 import flooringImg from '@/assets/categories/flooring.jpg';
@@ -50,7 +49,6 @@ export function HeroSection() {
       .order('display_order');
     
     if (data && data.length > 0) {
-      // Map to use fallback images if placeholder
       const mappedCards = data.map(card => ({
         ...card,
         image_url: card.image_url === '/placeholder.svg' 
@@ -59,7 +57,6 @@ export function HeroSection() {
       }));
       setCards(mappedCards);
     } else {
-      // Fallback placeholder cards
       setCards([
         { id: '1', title: 'Premium Granite', image_url: blackGraniteImg },
         { id: '2', title: 'Elegant Marble', image_url: kitchenCountertopsImg },
@@ -72,32 +69,21 @@ export function HeroSection() {
   const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + cards.length) % cards.length);
 
   return (
-    <section className="relative min-h-[55vh] sm:min-h-[70vh] lg:min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-background via-background to-muted">
-      {/* Animated Background Pattern */}
-      <motion.div
-        className="absolute inset-0 opacity-5"
-        animate={{ x: [0, 60], y: [0, 60] }}
-        transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-      >
-        <div className="absolute -inset-20" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
-      </motion.div>
-
+    <section className="relative min-h-[55vh] sm:min-h-[70vh] lg:min-h-[90vh] flex items-center overflow-hidden bg-background" data-testid="hero-section">
       <div className="container mx-auto px-4 py-8 sm:py-14 lg:py-20 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-6 sm:gap-10 lg:gap-20 items-center">
-          {/* Left Content */}
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-10 lg:gap-16 items-center">
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="text-center lg:text-left"
           >
             <motion.span
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="inline-block px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mb-3 sm:mb-6"
+              transition={{ delay: 0.15 }}
+              className="inline-block px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-semibold mb-3 sm:mb-5 tracking-wide"
+              data-testid="text-hero-badge"
             >
               25+ Years of Excellence
             </motion.span>
@@ -105,37 +91,39 @@ export function HeroSection() {
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.25, duration: 0.5 }}
               className="text-2xl sm:text-4xl lg:text-6xl font-display font-bold leading-tight mb-3 sm:mb-6"
+              data-testid="text-hero-title"
             >
               Crafting{' '}
-              <span className="text-gradient">Premium</span>{' '}
+              <span className="text-primary">Premium</span>{' '}
               Stone Excellence
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.35 }}
               className="text-sm sm:text-base lg:text-lg text-muted-foreground mb-4 sm:mb-8 max-w-xl mx-auto lg:mx-0"
+              data-testid="text-hero-subtitle"
             >
               Transform your spaces with our exquisite collection of granite, marble, 
               and premium stone products. Expert craftsmanship meets timeless elegance.
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="flex flex-row flex-wrap gap-2 sm:gap-4 justify-center lg:justify-start"
+              transition={{ delay: 0.45 }}
+              className="flex flex-row flex-wrap gap-2 sm:gap-3 justify-center lg:justify-start"
             >
-              <Button size="default" asChild className="group text-xs sm:text-sm">
+              <Button size="default" asChild className="group text-xs sm:text-sm" data-testid="button-browse-products">
                 <Link to="/products">
                   Browse Products
                   <ArrowRight className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
-              <Button size="default" variant="outline" asChild className="text-xs sm:text-sm">
+              <Button size="default" variant="outline" asChild className="text-xs sm:text-sm" data-testid="button-free-estimation">
                 <Link to="/estimation">Get Free Estimation</Link>
               </Button>
               <Button size="default" variant="outline" asChild className="border-primary/30 text-primary text-xs sm:text-sm" data-testid="button-visualizer-cta">
@@ -147,81 +135,74 @@ export function HeroSection() {
             </motion.div>
           </motion.div>
 
-          {/* Right - Carousel */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="relative h-[250px] sm:h-[350px] lg:h-[500px]"
+            data-testid="hero-carousel"
           >
-            <div className="relative w-full h-full">
-              {cards.map((card, index) => {
-                const offset = (index - currentIndex + cards.length) % cards.length;
-                const isActive = offset === 0;
-                const isPrev = offset === cards.length - 1;
-                const isNext = offset === 1;
-                const isVisible = isActive || isPrev || isNext;
-
-                return (
+            <div className="relative w-full h-full rounded-2xl overflow-hidden">
+              <AnimatePresence mode="wait">
+                {cards.length > 0 && (
                   <motion.div
-                    key={card.id}
-                    className="absolute inset-0 rounded-2xl overflow-hidden shadow-premium will-change-transform"
-                    style={{ zIndex: isActive ? 10 : isVisible ? 5 : 0 }}
-                    initial={false}
-                    animate={{
-                      x: isActive ? 0 : isPrev ? '-15%' : isNext ? '15%' : 0,
-                      scale: isActive ? 1 : isVisible ? 0.88 : 0.85,
-                      opacity: isActive ? 1 : isVisible ? 0.5 : 0,
-                    }}
-                    transition={{
-                      duration: 0.6,
-                      ease: [0.32, 0.72, 0, 1],
-                    }}
+                    key={currentIndex}
+                    initial={{ opacity: 0, scale: 1.05 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    className="absolute inset-0"
                   >
                     <img
-                      src={card.image_url}
-                      alt={card.title}
+                      src={cards[currentIndex]?.image_url}
+                      alt={cards[currentIndex]?.title}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <h3 className="text-white text-2xl font-display font-bold">
-                        {card.title}
-                      </h3>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+                      <motion.h3
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-white text-lg sm:text-2xl font-display font-bold"
+                      >
+                        {cards[currentIndex]?.title}
+                      </motion.h3>
                     </div>
                   </motion.div>
-                );
-              })}
+                )}
+              </AnimatePresence>
             </div>
 
-            {/* Navigation Arrows */}
             <button
               onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center hover:bg-white transition-colors"
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 dark:bg-black/60 flex items-center justify-center transition-colors"
               aria-label="Previous slide"
+              data-testid="button-hero-prev"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
             <button
               onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center hover:bg-white transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 dark:bg-black/60 flex items-center justify-center transition-colors"
               aria-label="Next slide"
+              data-testid="button-hero-next"
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
 
-            {/* Dots */}
-            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5">
               {cards.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-all ${
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
                     index === currentIndex
                       ? 'w-6 bg-primary'
-                      : 'bg-primary/30 hover:bg-primary/50'
+                      : 'w-1.5 bg-muted-foreground/30'
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
+                  data-testid={`button-hero-dot-${index}`}
                 />
               ))}
             </div>

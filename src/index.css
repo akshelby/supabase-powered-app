@@ -6,111 +6,112 @@
 
 @layer base {
   :root {
-    /* Light Theme - Clean & Premium */
-    --background: 30 20% 98%;
-    --foreground: 30 10% 10%;
+    /* Light Theme - CRED-inspired Clean & Bold */
+    --background: 0 0% 97%;
+    --foreground: 0 0% 8%;
 
     --card: 0 0% 100%;
-    --card-foreground: 30 10% 10%;
+    --card-foreground: 0 0% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 30 10% 10%;
+    --popover-foreground: 0 0% 8%;
 
-    /* Gold/Amber accent - premium luxury feel */
-    --primary: 35 90% 45%;
+    /* Deep forest green primary */
+    --primary: 152 55% 28%;
     --primary-foreground: 0 0% 100%;
 
-    /* Stone gray secondary */
-    --secondary: 30 5% 92%;
-    --secondary-foreground: 30 10% 20%;
+    /* Neutral warm gray secondary */
+    --secondary: 0 0% 93%;
+    --secondary-foreground: 0 0% 15%;
 
-    --muted: 30 10% 95%;
-    --muted-foreground: 30 10% 45%;
+    --muted: 0 0% 95%;
+    --muted-foreground: 0 0% 42%;
 
-    /* Warm accent */
-    --accent: 30 15% 90%;
-    --accent-foreground: 30 10% 15%;
+    /* Subtle green-tinted accent */
+    --accent: 150 10% 92%;
+    --accent-foreground: 0 0% 12%;
 
-    --destructive: 0 84% 60%;
+    /* Rich red for destructive/sale */
+    --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 15% 88%;
-    --input: 30 15% 88%;
-    --ring: 35 90% 45%;
+    --border: 0 0% 89%;
+    --input: 0 0% 89%;
+    --ring: 152 55% 28%;
 
     --radius: 0.75rem;
 
     /* Sidebar */
-    --sidebar-background: 30 10% 97%;
-    --sidebar-foreground: 30 10% 25%;
-    --sidebar-primary: 35 90% 45%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 20%;
+    --sidebar-primary: 152 55% 28%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 30 15% 93%;
-    --sidebar-accent-foreground: 30 10% 15%;
-    --sidebar-border: 30 15% 90%;
-    --sidebar-ring: 35 90% 45%;
+    --sidebar-accent: 150 8% 93%;
+    --sidebar-accent-foreground: 0 0% 12%;
+    --sidebar-border: 0 0% 91%;
+    --sidebar-ring: 152 55% 28%;
 
     /* Custom SP Granites tokens */
-    --granite: 30 8% 35%;
-    --marble: 30 5% 95%;
-    --gold: 35 90% 45%;
-    --gold-light: 40 80% 60%;
-    --stone: 30 10% 50%;
-    --charcoal: 30 10% 15%;
-    --cream: 40 30% 96%;
-    --success: 142 70% 45%;
+    --granite: 0 0% 32%;
+    --marble: 0 0% 96%;
+    --gold: 152 55% 28%;
+    --gold-light: 152 45% 42%;
+    --stone: 0 0% 48%;
+    --charcoal: 0 0% 10%;
+    --cream: 0 0% 97%;
+    --success: 152 55% 38%;
     --warning: 38 92% 50%;
     --info: 210 80% 55%;
   }
 
   .dark {
-    /* Dark Theme - Elegant & Luxurious */
-    --background: 30 10% 8%;
-    --foreground: 30 10% 95%;
+    /* Dark Theme - CRED-inspired Dark & Bold */
+    --background: 0 0% 7%;
+    --foreground: 0 0% 95%;
 
-    --card: 30 10% 12%;
-    --card-foreground: 30 10% 95%;
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 30 10% 10%;
-    --popover-foreground: 30 10% 95%;
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 40 85% 55%;
-    --primary-foreground: 30 10% 8%;
+    --primary: 152 50% 42%;
+    --primary-foreground: 0 0% 5%;
 
-    --secondary: 30 8% 18%;
-    --secondary-foreground: 30 10% 90%;
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 0 0% 90%;
 
-    --muted: 30 8% 20%;
-    --muted-foreground: 30 10% 60%;
+    --muted: 0 0% 18%;
+    --muted-foreground: 0 0% 58%;
 
-    --accent: 30 10% 22%;
-    --accent-foreground: 30 10% 95%;
+    --accent: 150 8% 20%;
+    --accent-foreground: 0 0% 95%;
 
-    --destructive: 0 62% 50%;
+    --destructive: 0 65% 48%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 8% 20%;
-    --input: 30 8% 20%;
-    --ring: 40 85% 55%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 152 50% 42%;
 
-    --sidebar-background: 30 10% 10%;
-    --sidebar-foreground: 30 10% 90%;
-    --sidebar-primary: 40 85% 55%;
-    --sidebar-primary-foreground: 30 10% 8%;
-    --sidebar-accent: 30 8% 18%;
-    --sidebar-accent-foreground: 30 10% 90%;
-    --sidebar-border: 30 8% 18%;
-    --sidebar-ring: 40 85% 55%;
+    --sidebar-background: 0 0% 9%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 152 50% 42%;
+    --sidebar-primary-foreground: 0 0% 5%;
+    --sidebar-accent: 150 6% 16%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 0 0% 16%;
+    --sidebar-ring: 152 50% 42%;
 
     /* Custom SP Granites tokens (dark) */
-    --granite: 30 8% 70%;
-    --marble: 30 5% 20%;
-    --gold: 40 85% 55%;
-    --gold-light: 45 80% 65%;
-    --stone: 30 10% 60%;
-    --charcoal: 30 10% 90%;
-    --cream: 40 20% 15%;
-    --success: 142 70% 50%;
+    --granite: 0 0% 68%;
+    --marble: 0 0% 18%;
+    --gold: 152 50% 42%;
+    --gold-light: 152 45% 55%;
+    --stone: 0 0% 58%;
+    --charcoal: 0 0% 92%;
+    --cream: 0 0% 12%;
+    --success: 152 55% 45%;
     --warning: 38 92% 55%;
     --info: 210 80% 60%;
   }
@@ -150,6 +151,8 @@
   .text-gradient {
     @apply bg-gradient-to-r from-primary to-[hsl(var(--gold-light))] bg-clip-text text-transparent;
   }
+
+  /* Premium shadow updated for green palette */
 
   /* Glass effect */
   .glass {

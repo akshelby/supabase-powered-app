@@ -10,7 +10,6 @@ import { useWishlist } from '@/contexts/WishlistContext';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 
-// Import product images
 import blackGraniteImg from '@/assets/products/black-granite.jpg';
 import brownGraniteImg from '@/assets/products/brown-granite.jpg';
 import greenGraniteImg from '@/assets/products/green-granite.jpg';
@@ -89,7 +88,7 @@ export function FeaturedProducts() {
   if (products.length === 0) return null;
 
   return (
-    <section className="py-8 sm:py-12 lg:py-16 bg-muted/50">
+    <section className="py-8 sm:py-12 lg:py-16 bg-muted/40" data-testid="featured-products-section">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -97,8 +96,8 @@ export function FeaturedProducts() {
           viewport={{ once: true }}
           className="text-center mb-4 sm:mb-8 lg:mb-12"
         >
-          <span className="text-primary font-medium text-xs sm:text-sm">Featured Collection</span>
-          <h2 className="text-xl sm:text-3xl lg:text-4xl font-display font-bold mt-1 sm:mt-2 mb-1 sm:mb-4">
+          <span className="text-xs sm:text-sm font-semibold text-muted-foreground uppercase tracking-wider" data-testid="text-featured-label">Featured Collection</span>
+          <h2 className="text-xl sm:text-3xl lg:text-4xl font-display font-bold mt-1 sm:mt-2 mb-1 sm:mb-4" data-testid="text-featured-title">
             Best Sellers
           </h2>
           <p className="text-muted-foreground text-xs sm:text-sm lg:text-base max-w-2xl mx-auto">
@@ -114,7 +113,8 @@ export function FeaturedProducts() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.05 }}
-              className="group bg-card rounded-lg sm:rounded-xl overflow-hidden border border-border hover:shadow-lg transition-all"
+              className="group bg-card rounded-md overflow-hidden border border-border"
+              data-testid={`card-product-${product.id}`}
             >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <img
@@ -123,7 +123,7 @@ export function FeaturedProducts() {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 {product.compare_price && product.compare_price > product.price && (
-                  <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-destructive text-destructive-foreground text-[10px] sm:text-xs font-medium rounded">
+                  <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-destructive text-destructive-foreground text-[10px] sm:text-xs font-semibold rounded" data-testid={`badge-discount-${product.id}`}>
                     {Math.round((1 - product.price / product.compare_price) * 100)}% OFF
                   </span>
                 )}
@@ -131,9 +131,10 @@ export function FeaturedProducts() {
                   <button
                     onClick={() => handleWishlistToggle(product.id)}
                     className={cn(
-                      'absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 flex items-center justify-center transition-colors',
-                      isInWishlist(product.id) ? 'text-destructive' : 'text-muted-foreground hover:text-destructive'
+                      'absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 dark:bg-black/60 flex items-center justify-center transition-colors',
+                      isInWishlist(product.id) ? 'text-destructive' : 'text-muted-foreground'
                     )}
+                    data-testid={`button-wishlist-${product.id}`}
                   >
                     <Heart className={cn('h-3.5 w-3.5', isInWishlist(product.id) && 'fill-current')} />
                   </button>
@@ -141,13 +142,13 @@ export function FeaturedProducts() {
               </div>
               <div className="p-2.5 sm:p-4">
                 <Link to={`/products/${product.slug}`}>
-                  <h3 className="text-xs sm:text-sm font-semibold hover:text-primary transition-colors line-clamp-1">
+                  <h3 className="text-xs sm:text-sm font-semibold line-clamp-1" data-testid={`text-product-name-${product.id}`}>
                     {product.name}
                   </h3>
                 </Link>
                 <div className="flex items-center justify-between gap-1 mt-1.5 sm:mt-3">
                   <div>
-                    <span className="text-sm sm:text-base font-bold text-primary">
+                    <span className="text-sm sm:text-base font-bold text-foreground" data-testid={`text-price-${product.id}`}>
                       {formatPrice(product.price)}
                     </span>
                     {product.compare_price && product.compare_price > product.price && (
@@ -160,6 +161,7 @@ export function FeaturedProducts() {
                     size="icon"
                     variant="outline"
                     onClick={() => handleAddToCart(product)}
+                    data-testid={`button-add-cart-${product.id}`}
                   >
                     <ShoppingCart className="h-3.5 w-3.5" />
                   </Button>
@@ -175,7 +177,7 @@ export function FeaturedProducts() {
           viewport={{ once: true }}
           className="text-center mt-6 sm:mt-10"
         >
-          <Button asChild size="default">
+          <Button asChild size="default" data-testid="button-view-all-products">
             <Link to="/products">
               View All Products
               <ArrowRight className="ml-2 h-4 w-4" />

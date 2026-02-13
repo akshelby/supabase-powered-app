@@ -22,7 +22,6 @@ export function TestimonialsSection() {
     if (data && data.length > 0) {
       setTestimonials(data as Testimonial[]);
     } else {
-      // Fallback testimonials
       setTestimonials([
         { id: '1', customer_name: 'Rajesh Kumar', company: 'Home Owner', designation: null, review_text: 'Excellent quality granite and professional installation. The team was punctual and the work was completed perfectly.', rating: 5, image_url: null, is_active: true, display_order: 1, created_at: '', updated_at: '' },
         { id: '2', customer_name: 'Priya Sharma', company: 'Interior Designer', designation: 'Lead Designer', review_text: 'I recommend SP Granites to all my clients. Their marble collection is stunning and the craftsmanship is top-notch.', rating: 5, image_url: null, is_active: true, display_order: 2, created_at: '', updated_at: '' },
@@ -32,7 +31,7 @@ export function TestimonialsSection() {
   };
 
   return (
-    <section className="py-8 sm:py-12 lg:py-16 bg-muted/50">
+    <section className="py-8 sm:py-12 lg:py-16 bg-muted/50" data-testid="testimonials-section">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -40,8 +39,8 @@ export function TestimonialsSection() {
           viewport={{ once: true }}
           className="text-center mb-4 sm:mb-8 lg:mb-12"
         >
-          <span className="text-primary font-medium text-xs sm:text-sm">Testimonials</span>
-          <h2 className="text-xl sm:text-3xl lg:text-4xl font-display font-bold mt-1 sm:mt-2 mb-1 sm:mb-4">
+          <span className="text-xs sm:text-sm font-semibold text-muted-foreground uppercase tracking-wider" data-testid="text-testimonials-label">Testimonials</span>
+          <h2 className="text-xl sm:text-3xl lg:text-4xl font-display font-bold mt-1 sm:mt-2 mb-1 sm:mb-4" data-testid="text-testimonials-title">
             What Our Clients Say
           </h2>
           <p className="text-muted-foreground text-xs sm:text-sm lg:text-base max-w-2xl mx-auto">
@@ -57,16 +56,17 @@ export function TestimonialsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="bg-card p-4 sm:p-5 lg:p-6 rounded-lg sm:rounded-xl border border-border relative"
+              className="bg-card p-4 sm:p-5 lg:p-6 rounded-md border border-border relative"
+              data-testid={`testimonial-card-${testimonial.id}`}
             >
-              <Quote className="absolute top-3 right-3 h-5 w-5 sm:h-8 sm:w-8 text-primary/20" />
+              <Quote className="absolute top-3 right-3 h-5 w-5 sm:h-8 sm:w-8 text-primary/15" />
               <div className="flex gap-0.5 mb-2 sm:mb-4">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star
                     key={i}
                     className={`h-3 w-3 sm:h-4 sm:w-4 ${
                       i < testimonial.rating
-                        ? 'text-primary fill-primary'
+                        ? 'text-yellow-500 fill-yellow-500'
                         : 'text-muted'
                     }`}
                   />

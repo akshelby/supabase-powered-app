@@ -22,9 +22,9 @@ const categories: Category[] = [
     icon: Gem,
     link: '/products?category=kitchen-slab',
     description: 'Premium kitchen countertops',
-    iconColor: 'text-amber-600 dark:text-amber-400',
-    bgColor: 'bg-amber-100 dark:bg-amber-900/40',
-    borderColor: 'border-amber-200 dark:border-amber-800',
+    iconColor: 'text-emerald-700 dark:text-emerald-400',
+    bgColor: 'bg-emerald-50 dark:bg-emerald-900/30',
+    borderColor: 'border-emerald-200 dark:border-emerald-800',
   },
   {
     id: 'vanity-top',
@@ -32,9 +32,9 @@ const categories: Category[] = [
     icon: Bath,
     link: '/products?category=vanity-top',
     description: 'Elegant bathroom vanities',
-    iconColor: 'text-sky-600 dark:text-sky-400',
-    bgColor: 'bg-sky-100 dark:bg-sky-900/40',
-    borderColor: 'border-sky-200 dark:border-sky-800',
+    iconColor: 'text-slate-700 dark:text-slate-400',
+    bgColor: 'bg-slate-50 dark:bg-slate-900/30',
+    borderColor: 'border-slate-200 dark:border-slate-800',
   },
   {
     id: 'dining-top',
@@ -42,9 +42,9 @@ const categories: Category[] = [
     icon: Utensils,
     link: '/products?category=dining-top',
     description: 'Stunning dining surfaces',
-    iconColor: 'text-rose-600 dark:text-rose-400',
-    bgColor: 'bg-rose-100 dark:bg-rose-900/40',
-    borderColor: 'border-rose-200 dark:border-rose-800',
+    iconColor: 'text-red-700 dark:text-red-400',
+    bgColor: 'bg-red-50 dark:bg-red-900/30',
+    borderColor: 'border-red-200 dark:border-red-800',
   },
   {
     id: 'bhrundhavan',
@@ -52,9 +52,9 @@ const categories: Category[] = [
     icon: BhrundhavanIcon,
     link: '/products?category=bhrundhavan',
     description: 'Traditional tulsi planters',
-    iconColor: 'text-emerald-600 dark:text-emerald-400',
-    bgColor: 'bg-emerald-100 dark:bg-emerald-900/40',
-    borderColor: 'border-emerald-200 dark:border-emerald-800',
+    iconColor: 'text-green-700 dark:text-green-400',
+    bgColor: 'bg-green-50 dark:bg-green-900/30',
+    borderColor: 'border-green-200 dark:border-green-800',
   },
   {
     id: 'tiles-fixing',
@@ -62,9 +62,9 @@ const categories: Category[] = [
     icon: LayoutGrid,
     link: '/services',
     description: 'Professional tile installation',
-    iconColor: 'text-violet-600 dark:text-violet-400',
-    bgColor: 'bg-violet-100 dark:bg-violet-900/40',
-    borderColor: 'border-violet-200 dark:border-violet-800',
+    iconColor: 'text-zinc-700 dark:text-zinc-400',
+    bgColor: 'bg-zinc-50 dark:bg-zinc-900/30',
+    borderColor: 'border-zinc-200 dark:border-zinc-800',
   },
   {
     id: 'contact-us',
@@ -72,9 +72,9 @@ const categories: Category[] = [
     icon: Headset,
     link: '/contact',
     description: 'Get in touch with us',
-    iconColor: 'text-blue-600 dark:text-blue-400',
-    bgColor: 'bg-blue-100 dark:bg-blue-900/40',
-    borderColor: 'border-blue-200 dark:border-blue-800',
+    iconColor: 'text-teal-700 dark:text-teal-400',
+    bgColor: 'bg-teal-50 dark:bg-teal-900/30',
+    borderColor: 'border-teal-200 dark:border-teal-800',
   },
   {
     id: 'offline-stores',
@@ -82,9 +82,9 @@ const categories: Category[] = [
     icon: Store,
     link: '/stores',
     description: 'Visit our showrooms',
-    iconColor: 'text-teal-600 dark:text-teal-400',
-    bgColor: 'bg-teal-100 dark:bg-teal-900/40',
-    borderColor: 'border-teal-200 dark:border-teal-800',
+    iconColor: 'text-neutral-700 dark:text-neutral-400',
+    bgColor: 'bg-neutral-50 dark:bg-neutral-900/30',
+    borderColor: 'border-neutral-200 dark:border-neutral-800',
   },
 ];
 
@@ -100,7 +100,7 @@ const containerVariants = {
 
 export function CategoriesSection() {
   return (
-    <section className="py-8 sm:py-12 md:py-16 bg-background">
+    <section className="py-8 sm:py-12 md:py-16 bg-background" data-testid="categories-section">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -109,7 +109,7 @@ export function CategoriesSection() {
           transition={{ duration: 0.5 }}
           className="text-center mb-4 sm:mb-8 md:mb-12"
         >
-          <h2 className="text-xl sm:text-3xl md:text-4xl font-display font-bold text-foreground">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-display font-bold text-foreground" data-testid="text-categories-title">
             Explore Categories
           </h2>
           <p className="mt-1 text-xs sm:text-sm md:text-base text-muted-foreground">
