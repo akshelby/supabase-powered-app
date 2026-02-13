@@ -387,6 +387,10 @@
     "off": "OFF",
     "phone": "Phone"
   },
+  "contactDialog": {
+    "title": "Contact Us",
+    "noNumbers": "No contact numbers available at the moment."
+  },
   "language": {
     "english": "English",
     "hindi": "हिन्दी",

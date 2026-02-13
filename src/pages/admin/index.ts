@@ -14,3 +14,4 @@ export { default as AdminLocations } from './AdminLocations';
 export { default as AdminUsers } from './AdminUsers';
 export { default as AdminAnalytics } from './AdminAnalytics';
 export { default as AdminChat } from './AdminChat';
+export { default as AdminContactNumbers } from './AdminContactNumbers';

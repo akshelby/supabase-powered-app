@@ -14,9 +14,10 @@ interface CategoryItemProps {
   iconColor?: string;
   bgColor?: string;
   borderColor?: string;
+  onClick?: () => void;
 }
 
-export function CategoryItem({ name, icon: Icon, link, iconColor, bgColor, borderColor }: CategoryItemProps) {
+export function CategoryItem({ name, icon: Icon, link, iconColor, bgColor, borderColor, onClick }: CategoryItemProps) {
   const isExternal = link.startsWith('tel:') || link.startsWith('http') || link.startsWith('mailto:');
 
   const content = (
@@ -63,7 +64,16 @@ export function CategoryItem({ name, icon: Icon, link, iconColor, bgColor, borde
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
     >
-      {isExternal ? (
+      {onClick ? (
+        <button
+          type="button"
+          onClick={onClick}
+          className="flex flex-col items-center gap-3 group"
+          data-testid={`link-category-${name.toLowerCase().replace(/\s+/g, '-')}`}
+        >
+          {content}
+        </button>
+      ) : isExternal ? (
         <a
           href={link}
           className="flex flex-col items-center gap-3 group"

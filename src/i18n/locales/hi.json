@@ -387,6 +387,10 @@
     "off": "छूट",
     "phone": "फोन"
   },
+  "contactDialog": {
+    "title": "संपर्क करें",
+    "noNumbers": "इस समय कोई संपर्क नंबर उपलब्ध नहीं है।"
+  },
   "language": {
     "english": "English",
     "hindi": "हिन्दी",

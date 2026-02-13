@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Gem, Bath, Utensils, LayoutGrid, Headset, Store, FileText, Phone } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { CategoryItem } from './CategoryItem';
 import { BhrundhavanIcon } from './BhrundhavanIcon';
+import { ContactNumbersDialog } from './ContactNumbersDialog';
 import { ElementType } from 'react';
 
 interface Category {
@@ -121,6 +123,7 @@ const containerVariants = {
 
 export function CategoriesSection() {
   const { t } = useTranslation();
+  const [contactDialogOpen, setContactDialogOpen] = useState(false);
 
   return (
     <section className="py-8 sm:py-12 md:py-16 bg-background" data-testid="categories-section">
@@ -159,10 +162,13 @@ export function CategoriesSection() {
               bgColor={category.bgColor}
               borderColor={category.borderColor}
               index={index}
+              onClick={category.id === 'contact-us' ? () => setContactDialogOpen(true) : undefined}
             />
           ))}
         </motion.div>
       </div>
+
+      <ContactNumbersDialog open={contactDialogOpen} onOpenChange={setContactDialogOpen} />
     </section>
   );
 }

@@ -387,6 +387,10 @@
     "off": "ರಿಯಾಯಿತಿ",
     "phone": "ಫೋನ್"
   },
+  "contactDialog": {
+    "title": "ನಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಿ",
+    "noNumbers": "ಈ ಸಮಯದಲ್ಲಿ ಯಾವುದೇ ಸಂಪರ್ಕ ಸಂಖ್ಯೆಗಳು ಲಭ್ಯವಿಲ್ಲ."
+  },
   "language": {
     "english": "English",
     "hindi": "हिन्दी",

@@ -35,6 +35,7 @@ import {
   Home,
   Settings,
   MessageCircle,
+  Phone,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -57,6 +58,7 @@ const menuItems = [
   { icon: Image, label: 'Banners', href: '/admin/banners' },
   { icon: Layers, label: 'Hero Carousel', href: '/admin/carousel' },
   { icon: MapPin, label: 'Store Locations', href: '/admin/locations' },
+  { icon: Phone, label: 'Contact Numbers', href: '/admin/contact-numbers' },
   { icon: Users, label: 'Users', href: '/admin/users' },
   { icon: BarChart3, label: 'Analytics', href: '/admin/analytics' },
 ];

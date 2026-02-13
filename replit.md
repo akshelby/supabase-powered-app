@@ -57,6 +57,7 @@ Preferred communication style: Simple, everyday language.
   - `catalogs` — Downloadable catalog files with download counts
   - `hero_carousel_cards` — Homepage carousel content
   - `user_roles` — RBAC
+  - `contact_numbers` — Admin-managed phone numbers displayed in contact popup (with active/inactive toggle)
   - Chat-related tables for real-time customer support conversations
 - **Storage**: Supabase Storage for file uploads (estimation images, voice recordings, chat media) in buckets like `estimation-files`
 - **Real-time**: Supabase real-time subscriptions used for the chat feature
@@ -70,7 +71,7 @@ Preferred communication style: Simple, everyday language.
 5. **Invoice PDF Download** — Customers can download professional PDF invoices from order detail pages using jsPDF + jspdf-autotable
 6. **Estimation System** — Multi-step form with drawing canvas, voice recording, image upload for custom stone project quotes
 7. **Live Chat** — WhatsApp-style chat with reference IDs, media support (images, video, audio), real-time updates, conversation history
-8. **Admin Dashboard** — Full CRUD for products, categories, orders, enquiries, estimations, reviews, testimonials, services, catalogs, banners, carousel, locations, users, analytics, and admin chat
+8. **Admin Dashboard** — Full CRUD for products, categories, orders, enquiries, estimations, reviews, testimonials, services, catalogs, banners, carousel, locations, contact numbers, users, analytics, and admin chat
 9. **About Us Page** — Company story, mission, vision, stats, and values at `/about`
 10. **Stone Visualizer** — Interactive car-configurator-style tool at `/visualizer` for customizing kitchen countertops, dining tables, and vanity tops with 12 stone colors (granite/marble/quartz), 6 edge profiles, 4 finishes, and live SVG preview. "Request Estimate" CTA passes configuration to the estimation form via URL query params
 
