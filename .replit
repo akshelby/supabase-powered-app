@@ -39,6 +39,7 @@ channel = "stable-25_05"
 expertMode = true
 
 [deployment]
-deploymentTarget = "static"
-build = ["npx", "vite", "build"]
+deploymentTarget = "autoscale"
+build = ["npm", "run", "build"]
 publicDir = "dist"
+run = ["npm", "run", "start"]
