@@ -24,7 +24,7 @@ export function CategoryItem({ name, icon: Icon, link, iconColor, bgColor, borde
     <>
       <motion.div
         className={cn(
-          'relative w-14 h-14 sm:w-[4.5rem] sm:h-[4.5rem] md:w-24 md:h-24',
+          'relative w-14 h-14 sm:w-[4.5rem] sm:h-[4.5rem] md:w-24 md:h-24 lg:w-28 lg:h-28',
           'rounded-xl sm:rounded-2xl flex items-center justify-center',
           'border-2 transition-all duration-300',
           bgColor || 'bg-card',
@@ -37,7 +37,7 @@ export function CategoryItem({ name, icon: Icon, link, iconColor, bgColor, borde
       >
         <Icon
           className={cn(
-            'w-6 h-6 sm:w-8 sm:h-8 md:w-11 md:h-11',
+            'w-6 h-6 sm:w-8 sm:h-8 md:w-11 md:h-11 lg:w-12 lg:h-12',
             'transition-transform duration-300 relative z-10',
             'group-hover:scale-110',
             iconColor || 'text-foreground/70'
@@ -47,8 +47,8 @@ export function CategoryItem({ name, icon: Icon, link, iconColor, bgColor, borde
       </motion.div>
       <span
         className={cn(
-          'text-[10px] sm:text-xs md:text-sm font-semibold text-center',
-          'transition-colors duration-300 leading-tight max-w-[5rem] sm:max-w-[6rem]',
+          'text-[10px] sm:text-xs md:text-sm lg:text-base font-semibold text-center',
+          'transition-colors duration-300 leading-tight max-w-[5rem] sm:max-w-[6rem] lg:max-w-[8rem]',
           'text-muted-foreground group-hover:text-foreground'
         )}
       >

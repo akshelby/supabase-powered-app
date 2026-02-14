@@ -71,16 +71,16 @@ export function ServicesSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08 }}
-                className="group p-3 sm:p-4 lg:p-6 bg-card rounded-md border border-border transition-all"
+                className="group p-3 sm:p-4 lg:p-8 bg-card rounded-md border border-border transition-all"
                 data-testid={`service-card-${service.id}`}
               >
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3 sm:mb-4">
-                  <IconComponent className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-primary/10 flex items-center justify-center mb-3 sm:mb-4">
+                  <IconComponent className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-primary" />
                 </div>
-                <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1 sm:mb-2">
+                <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1 sm:mb-2 lg:mb-3">
                   {service.name}
                 </h3>
-                <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
+                <p className="text-xs sm:text-sm lg:text-base text-muted-foreground line-clamp-2 lg:line-clamp-3">
                   {service.short_description}
                 </p>
               </motion.div>

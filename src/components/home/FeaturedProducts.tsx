@@ -112,7 +112,7 @@ export function FeaturedProducts() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 xl:gap-8">
           {products.map((product, index) => (
             <motion.div
               key={product.id}
@@ -123,7 +123,7 @@ export function FeaturedProducts() {
               className="group bg-card rounded-md overflow-hidden border border-border"
               data-testid={`card-product-${product.id}`}
             >
-              <div className="relative aspect-[4/3] overflow-hidden">
+              <div className="relative aspect-[4/3] lg:aspect-[3/2] overflow-hidden">
                 <img
                   src={getProductImage(product)}
                   alt={product.name}
@@ -147,27 +147,38 @@ export function FeaturedProducts() {
                   </button>
                 )}
               </div>
-              <div className="p-2.5 sm:p-4">
+              <div className="p-2.5 sm:p-4 lg:p-5">
                 <Link to={`/products/${product.slug}`}>
-                  <h3 className="text-xs sm:text-sm font-semibold line-clamp-1" data-testid={`text-product-name-${product.id}`}>
+                  <h3 className="text-xs sm:text-sm lg:text-base font-semibold line-clamp-1" data-testid={`text-product-name-${product.id}`}>
                     {product.name}
                   </h3>
                 </Link>
                 <div className="flex items-center justify-between gap-1 mt-1.5 sm:mt-3">
                   <div>
-                    <span className="text-sm sm:text-base font-bold text-foreground" data-testid={`text-price-${product.id}`}>
+                    <span className="text-sm sm:text-base lg:text-lg font-bold text-foreground" data-testid={`text-price-${product.id}`}>
                       {formatPrice(product.price)}
                     </span>
                     {product.compare_price && product.compare_price > product.price && (
-                      <span className="text-[10px] sm:text-xs text-muted-foreground line-through ml-1">
+                      <span className="text-[10px] sm:text-xs lg:text-sm text-muted-foreground line-through ml-1">
                         {formatPrice(product.compare_price)}
                       </span>
                     )}
                   </div>
                   <Button
+                    size="default"
+                    variant="outline"
+                    onClick={() => handleAddToCart(product)}
+                    className="hidden lg:inline-flex text-xs"
+                    data-testid={`button-add-cart-desktop-${product.id}`}
+                  >
+                    <ShoppingCart className="h-3.5 w-3.5 mr-1.5" />
+                    {t('featured.addToCart')}
+                  </Button>
+                  <Button
                     size="icon"
                     variant="outline"
                     onClick={() => handleAddToCart(product)}
+                    className="lg:hidden"
                     data-testid={`button-add-cart-${product.id}`}
                   >
                     <ShoppingCart className="h-3.5 w-3.5" />

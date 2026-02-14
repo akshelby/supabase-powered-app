@@ -161,9 +161,13 @@ export function PremiumCollection() {
   }, [isDragging, startMomentum]);
 
   const [isMobile, setIsMobile] = useState(false);
+  const [, setWindowWidth] = useState(0);
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 640);
+    const check = () => {
+      setIsMobile(window.innerWidth < 640);
+      setWindowWidth(window.innerWidth);
+    };
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
@@ -173,13 +177,14 @@ export function PremiumCollection() {
   if (cardCount === 0) return null;
 
   const anglePerCard = 360 / cardCount;
-  const cardW = isMobile ? 120 : 180;
-  const cardH = isMobile ? 170 : 260;
-  const containerH = isMobile ? 260 : 380;
+  const isLargeDesktop = !isMobile && typeof window !== 'undefined' && window.innerWidth >= 1280;
+  const cardW = isMobile ? 120 : isLargeDesktop ? 220 : 180;
+  const cardH = isMobile ? 170 : isLargeDesktop ? 320 : 260;
+  const containerH = isMobile ? 260 : isLargeDesktop ? 440 : 380;
   const halfCard = cardW / 2;
-  const gap = isMobile ? 8 : 12;
+  const gap = isMobile ? 8 : isLargeDesktop ? 16 : 12;
   const minRadius = Math.ceil((halfCard + gap) / Math.sin(Math.PI / cardCount));
-  const radius = Math.max(minRadius, isMobile ? 100 : 160);
+  const radius = Math.max(minRadius, isMobile ? 100 : isLargeDesktop ? 240 : 160);
 
   return (
     <section className="py-10 sm:py-16 md:py-20 bg-muted/30 overflow-hidden">
@@ -203,7 +208,7 @@ export function PremiumCollection() {
           className="relative mx-auto select-none"
           style={{
             height: `${containerH}px`,
-            perspective: isMobile ? '800px' : '1200px',
+            perspective: isMobile ? '800px' : isLargeDesktop ? '1600px' : '1200px',
             cursor: isDragging ? 'grabbing' : 'grab',
             touchAction: 'pan-y',
           }}

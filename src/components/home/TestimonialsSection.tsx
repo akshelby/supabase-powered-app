@@ -58,10 +58,10 @@ export function TestimonialsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="bg-card p-4 sm:p-5 lg:p-6 rounded-md border border-border relative"
+              className="bg-card p-4 sm:p-5 lg:p-8 rounded-md border border-border relative"
               data-testid={`testimonial-card-${testimonial.id}`}
             >
-              <Quote className="absolute top-3 right-3 h-5 w-5 sm:h-8 sm:w-8 text-primary/15" />
+              <Quote className="absolute top-3 right-3 h-5 w-5 sm:h-8 sm:w-8 lg:h-10 lg:w-10 text-primary/15" />
               <div className="flex gap-0.5 mb-2 sm:mb-4">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star
@@ -74,17 +74,17 @@ export function TestimonialsSection() {
                   />
                 ))}
               </div>
-              <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-6 line-clamp-3 sm:line-clamp-4">
+              <p className="text-xs sm:text-sm lg:text-base text-muted-foreground mb-3 sm:mb-6 line-clamp-3 sm:line-clamp-4 lg:line-clamp-none">
                 "{testimonial.review_text}"
               </p>
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs sm:text-sm">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs sm:text-sm lg:text-base">
                   {testimonial.customer_name.charAt(0)}
                 </div>
                 <div>
-                  <h4 className="text-xs sm:text-sm font-semibold">{testimonial.customer_name}</h4>
+                  <h4 className="text-xs sm:text-sm lg:text-base font-semibold">{testimonial.customer_name}</h4>
                   {testimonial.company && (
-                    <p className="text-[10px] sm:text-xs text-muted-foreground">
+                    <p className="text-[10px] sm:text-xs lg:text-sm text-muted-foreground">
                       {testimonial.designation && `${testimonial.designation}, `}
                       {testimonial.company}
                     </p>
