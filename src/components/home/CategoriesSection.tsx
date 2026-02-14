@@ -16,6 +16,8 @@ interface Category {
   iconColor: string;
   bgColor: string;
   borderColor: string;
+  prominent?: boolean;
+  prominentBg?: string;
 }
 
 const categories: Category[] = [
@@ -115,9 +117,11 @@ const categories: Category[] = [
     icon: MessageSquare,
     link: 'https://wa.me/919876543210',
     descriptionKey: 'categories.whatsappDesc',
-    iconColor: 'text-green-600 dark:text-green-400',
-    bgColor: 'bg-green-50 dark:bg-green-900/30',
-    borderColor: 'border-green-200 dark:border-green-800',
+    iconColor: 'text-white',
+    bgColor: 'bg-[#25D366]',
+    borderColor: 'border-transparent',
+    prominent: true,
+    prominentBg: 'bg-[#25D366]',
   },
   {
     id: 'chat-support',
@@ -125,9 +129,11 @@ const categories: Category[] = [
     icon: MessageCircle,
     link: '#chat',
     descriptionKey: 'categories.chatSupportDesc',
-    iconColor: 'text-purple-700 dark:text-purple-400',
-    bgColor: 'bg-purple-50 dark:bg-purple-900/30',
-    borderColor: 'border-purple-200 dark:border-purple-800',
+    iconColor: 'text-white',
+    bgColor: 'bg-[#E60000]',
+    borderColor: 'border-transparent',
+    prominent: true,
+    prominentBg: 'bg-[#E60000]',
   },
 ];
 
@@ -185,6 +191,8 @@ export function CategoriesSection() {
               iconColor={category.iconColor}
               bgColor={category.bgColor}
               borderColor={category.borderColor}
+              prominent={category.prominent}
+              prominentBg={category.prominentBg}
               index={index}
               onClick={
                 category.id === 'contact-us' ? () => setContactDialogOpen(true) :
