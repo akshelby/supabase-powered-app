@@ -393,25 +393,27 @@ export default function ChatPage() {
             )}
 
             {/* Manual Resume */}
-            <div className="space-y-3">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">Or enter Reference ID</span>
+            {user && (
+              <div className="space-y-3">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">Or enter Reference ID</span>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Enter Reference ID (e.g., SPG-XXXXX)"
+                    value={existingRefId}
+                    onChange={(e) => setExistingRefId(e.target.value.toUpperCase())}
+                    className="rounded-xl"
+                  />
+                  <Button variant="outline" className="rounded-xl px-6" onClick={resumeConversation} disabled={!existingRefId.trim()}>
+                    Resume
+                  </Button>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Enter Reference ID (e.g., SPG-XXXXX)"
-                  value={existingRefId}
-                  onChange={(e) => setExistingRefId(e.target.value.toUpperCase())}
-                  className="rounded-xl"
-                />
-                <Button variant="outline" className="rounded-xl px-6" onClick={resumeConversation} disabled={!existingRefId.trim()}>
-                  Resume
-                </Button>
-              </div>
-            </div>
+            )}
           </div>
         </ScrollArea>
       ) : (

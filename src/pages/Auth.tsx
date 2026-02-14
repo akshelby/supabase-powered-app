@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,18 +9,21 @@ import { useTranslation } from 'react-i18next';
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   const { t } = useTranslation();
   const [authMethod, setAuthMethod] = useState<'email' | 'phone'>('email');
+  const redirectTo = searchParams.get('redirect') || '/';
+  const defaultTab = searchParams.get('mode') === 'signup' ? 'signup' : 'signin';
 
   useEffect(() => {
     if (user && !authLoading) {
-      navigate('/');
+      navigate(redirectTo);
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, navigate, redirectTo]);
 
   const handleSuccess = () => {
-    navigate('/');
+    navigate(redirectTo);
   };
 
   if (authLoading) {
@@ -68,7 +71,7 @@ const Auth = () => {
           </div>
 
           {authMethod === 'email' ? (
-            <Tabs defaultValue="signin" className="w-full">
+            <Tabs defaultValue={defaultTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="signin">{t('auth.signIn')}</TabsTrigger>
                 <TabsTrigger value="signup">{t('auth.signUp')}</TabsTrigger>
