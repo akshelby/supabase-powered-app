@@ -2,7 +2,7 @@
 
 ## Overview
 
-SP Granites is a full-stack e-commerce web application for a granite, marble, and stone products business. It includes a customer-facing storefront with product browsing, cart/wishlist, order management, estimation requests, and live chat support, alongside a comprehensive admin dashboard for managing products, orders, users, content, and analytics. The app uses a React frontend with an Express + Drizzle ORM backend, backed by Replit's built-in PostgreSQL database.
+SP Granites is a full-stack e-commerce web application for a granite, marble, and stone products business. It includes a customer-facing storefront with product browsing, cart/wishlist, order management, estimation requests, and live chat support, alongside a comprehensive admin dashboard for managing products, orders, users, content, and analytics. The app uses a React frontend with Supabase as the backend (authentication, database, storage).
 
 ## User Preferences
 
@@ -20,15 +20,15 @@ Preferred communication style: Simple, everyday language.
 - **Animations**: Framer Motion for page transitions and UI animations
 - **Forms**: React Hook Form with Zod schema validation
 - **Component Library**: shadcn/ui (configured via components.json). Components live in `src/components/ui/`. Path alias `@/` maps to `src/`
-- **API Client**: Custom fetch-based client at `src/lib/api.ts` with token-based auth
 
-### Backend
+### Backend (Supabase)
 
-- **Framework**: Express.js with TypeScript, runs on port 3001 in development
-- **ORM**: Drizzle ORM with PostgreSQL (Replit's built-in Neon-backed database)
-- **Authentication**: Token-based auth with bcrypt password hashing. Tokens stored in `sessions` table
-- **Authorization**: Role-based access control with `user_roles` table (admin, moderator, user)
-- **Schema**: Defined in `shared/schema.ts` using Drizzle's pgTable definitions
+- **Database**: Supabase PostgreSQL
+- **Authentication**: Supabase Auth with email/password login
+- **Authorization**: Role-based access control via `user_roles` table (admin, moderator, user)
+- **Client**: Supabase JS client at `src/integrations/supabase/client.ts`
+- **Types**: Auto-generated Supabase types at `src/integrations/supabase/types.ts`
+- **Note**: Some tables use `as any` casts for tables not yet in generated types (e.g., contact_numbers)
 
 ### Application Structure
 
@@ -43,23 +43,15 @@ Preferred communication style: Simple, everyday language.
   - `layout/` — Main layout wrapper, navbar, footer, floating action buttons
   - `visualizer/` — Interactive stone customizer with SVG room scenes
   - `ui/` — shadcn/ui primitives
-- `src/contexts/` — Cart (localStorage-persisted) and Wishlist (API-synced) contexts
-- `src/hooks/` — Auth hook (token-based auth state), mobile detection, toast management
-- `src/lib/api.ts` — Frontend API client with token management
+- `src/contexts/` — Cart (localStorage-persisted) and Wishlist (API-synced via Supabase) contexts
+- `src/hooks/` — Auth hook (Supabase auth state), mobile detection, toast management
+- `src/integrations/supabase/` — Supabase client configuration and types
 - `src/types/database.ts` — TypeScript interfaces for all database entities
 - `src/i18n/` — Internationalization config and locale files (en.json, hi.json, kn.json)
-- `server/` — Express backend:
-  - `server/index.ts` — Server entry point
-  - `server/routes.ts` — All API routes (public, protected, admin)
-  - `server/db.ts` — Database connection with Drizzle
-- `shared/schema.ts` — Drizzle schema definitions for all tables
-- `drizzle.config.ts` — Drizzle Kit configuration
 
-### Database Tables
+### Database Tables (Supabase)
 
-- `users` — User accounts with email/password
-- `sessions` — Auth tokens
-- `profiles` — Extended user data
+- `profiles` — Extended user data (linked to Supabase Auth users)
 - `user_roles` — Role-based access control
 - `products`, `product_categories` — Product catalog
 - `product_reviews` — Product reviews (requires approval)
@@ -94,25 +86,27 @@ Preferred communication style: Simple, everyday language.
 
 ### Dev Server Configuration
 
-- Frontend: Vite on port **5000** with HMR and API proxy to backend
-- Backend: Express on port **3001**
-- Production: Express serves both API and built frontend on port **5000**
-- `npm run dev` starts both servers concurrently
+- Frontend: Vite on port **5000** with HMR
+- No backend server needed (all data via Supabase client)
+- `npm run dev` starts Vite dev server
+
+### Environment Variables
+
+- `VITE_SUPABASE_URL` — Supabase project URL (public, with hardcoded fallback in client.ts)
+- `VITE_SUPABASE_ANON_KEY` — Supabase anon/publishable key (public, with hardcoded fallback in client.ts)
 
 ## Recent Changes
 
-- **2026-02-14**: Migrated from Supabase to Replit's built-in PostgreSQL with Express + Drizzle ORM backend
-  - Replaced Supabase Auth with token-based authentication (email/password)
-  - Replaced all Supabase client calls with REST API endpoints via `src/lib/api.ts`
-  - Created Express server with comprehensive API routes
-  - Created Drizzle schema matching all original Supabase tables
+- **2026-02-14**: Migrated back to Supabase from Express + Drizzle ORM backend
+  - Restored Supabase Auth for authentication (email/password)
+  - Replaced all Express API calls with direct Supabase client queries
+  - Removed Express server dependency
+  - Added smart fallbacks in client.ts to handle env var misconfiguration
   - Phone OTP auth and Google OAuth marked as "coming soon"
-  - Real-time chat replaced with 3-second polling
-  - File uploads use data URLs instead of Supabase Storage
+  - Chat system uses 3-second polling for updates
+  - Auth redirects via query params (?redirect=/chat, ?mode=signup)
 
 ## Scripts
 
-- `npm run dev` — Start dev server (frontend + backend)
+- `npm run dev` — Start Vite dev server on port 5000
 - `npm run build` — Build for production
-- `npm run db:push` — Push schema changes to database
-- `npm run db:studio` — Open Drizzle Studio for database management
