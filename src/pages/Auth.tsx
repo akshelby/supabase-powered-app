@@ -3,9 +3,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Mail, Phone } from 'lucide-react';
+import { Loader2, Mail, Phone, X } from 'lucide-react';
 import { EmailAuthForm, PhoneAuthForm, SocialAuthButtons } from '@/components/auth';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -36,7 +37,15 @@ const Auth = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md relative">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-2 top-2 h-8 w-8 rounded-full text-muted-foreground hover:text-foreground"
+          onClick={() => navigate('/')}
+        >
+          <X className="h-4 w-4" />
+        </Button>
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold">{t('auth.welcome')}</CardTitle>
           <CardDescription>{t('auth.signInDesc')}</CardDescription>
