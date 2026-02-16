@@ -37,19 +37,25 @@ export function FeaturedProducts() {
   const { t } = useTranslation();
 
   useEffect(() => {
+    let cancelled = false;
+    const fetchFeaturedProducts = async (attempt = 0) => {
+      try {
+        const { data, error } = await supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
+        if (error) throw error;
+        if (cancelled) return;
+        const featured = (data || []).filter((p: any) => p.is_featured);
+        setProducts(featured.slice(0, 8) as Product[]);
+      } catch (err: any) {
+        if (!cancelled && attempt < 2 && err?.message?.includes('bort')) {
+          setTimeout(() => fetchFeaturedProducts(attempt + 1), 500 * (attempt + 1));
+          return;
+        }
+        console.error('Error fetching featured products:', err);
+      }
+    };
     fetchFeaturedProducts();
+    return () => { cancelled = true; };
   }, []);
-
-  const fetchFeaturedProducts = async () => {
-    try {
-      const { data, error } = await supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
-      if (error) throw error;
-      const featured = (data || []).filter((p: any) => p.is_featured);
-      setProducts(featured.slice(0, 8) as Product[]);
-    } catch {
-      console.error('Error fetching featured products');
-    }
-  };
 
   const getProductImage = (product: Product) => {
     if (product.images && product.images.length > 0 && product.images[0] !== '/placeholder.svg') {

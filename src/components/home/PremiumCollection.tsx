@@ -52,10 +52,12 @@ export function PremiumCollection() {
   const isHorizontalSwipe = useRef<boolean | null>(null);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    let cancelled = false;
+    const fetchProducts = async (attempt = 0) => {
       try {
         const { data, error } = await supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
         if (error) throw error;
+        if (cancelled) return;
         const allProducts = data || [];
         const featured = allProducts.filter((p: any) => p.is_featured && p.is_active);
         if (featured.length > 0) {
@@ -64,11 +66,16 @@ export function PremiumCollection() {
         }
         const active = allProducts.filter((p: any) => p.is_active);
         if (active.length > 0) setProducts(active.slice(0, 8));
-      } catch {
-        // silent fallback
+      } catch (err: any) {
+        if (!cancelled && attempt < 2 && err?.message?.includes('bort')) {
+          setTimeout(() => fetchProducts(attempt + 1), 500 * (attempt + 1));
+          return;
+        }
+        console.error('Error fetching premium collection:', err);
       }
     };
     fetchProducts();
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
