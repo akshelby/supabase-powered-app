@@ -1,6 +1,7 @@
 import { MainLayout } from '@/components/layout';
 import {
   HeroSection,
+  PremiumCollection,
   ServicesSection,
   StatsSection,
   CTASection,
@@ -10,6 +11,7 @@ export default function HomePage() {
   return (
     <MainLayout>
       <HeroSection />
+      <PremiumCollection />
       <ServicesSection />
       <StatsSection />
       <CTASection />
