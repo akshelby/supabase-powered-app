@@ -51,15 +51,6 @@ export function PremiumCollection() {
   const pointerStartY = useRef(0);
   const isHorizontalSwipe = useRef<boolean | null>(null);
 
-  const fallbackProducts: CollectionProduct[] = [
-    { id: 'fb-1', name: 'Black Galaxy Granite', slug: 'black-galaxy-granite', price: 150, images: [], is_active: true },
-    { id: 'fb-2', name: 'Tan Brown Granite', slug: 'tan-brown-granite', price: 120, images: [], is_active: true },
-    { id: 'fb-3', name: 'Blue Pearl Granite', slug: 'blue-pearl-granite', price: 200, images: [], is_active: true },
-    { id: 'fb-4', name: 'Imperial Red Granite', slug: 'imperial-red-granite', price: 180, images: [], is_active: true },
-    { id: 'fb-5', name: 'Steel Grey Granite', slug: 'steel-grey-granite', price: 130, images: [], is_active: true },
-    { id: 'fb-6', name: 'Green Galaxy Granite', slug: 'green-galaxy-granite', price: 160, images: [], is_active: true },
-  ];
-
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -72,13 +63,9 @@ export function PremiumCollection() {
           return;
         }
         const active = allProducts.filter((p: any) => p.is_active);
-        if (active.length > 0) {
-          setProducts(active.slice(0, 8));
-          return;
-        }
-        setProducts(fallbackProducts);
+        if (active.length > 0) setProducts(active.slice(0, 8));
       } catch {
-        setProducts(fallbackProducts);
+        // silent fallback
       }
     };
     fetchProducts();

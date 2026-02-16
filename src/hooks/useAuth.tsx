@@ -42,32 +42,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let didTimeout = false;
-    const timeout = setTimeout(() => {
-      didTimeout = true;
-      setLoading(false);
-    }, 5000);
-
     supabase.auth.getSession().then(async ({ data: { session: s } }) => {
-      if (didTimeout) return;
-      clearTimeout(timeout);
       setSession(s);
       const mapped = mapUser(s?.user ?? null);
       setUser(mapped);
       if (mapped) {
-        try {
-          const r = await fetchRole(mapped.id);
-          setRole(r);
-        } catch {
-          setRole('user');
-        }
+        const r = await fetchRole(mapped.id);
+        setRole(r);
       }
       setLoading(false);
-    }).catch(() => {
-      if (!didTimeout) {
-        clearTimeout(timeout);
-        setLoading(false);
-      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, s) => {
@@ -75,22 +58,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const mapped = mapUser(s?.user ?? null);
       setUser(mapped);
       if (mapped) {
-        try {
-          const r = await fetchRole(mapped.id);
-          setRole(r);
-        } catch {
-          setRole('user');
-        }
+        const r = await fetchRole(mapped.id);
+        setRole(r);
       } else {
         setRole(null);
       }
       setLoading(false);
     });
 
-    return () => {
-      clearTimeout(timeout);
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   const signUp = async (email: string, password: string) => {
