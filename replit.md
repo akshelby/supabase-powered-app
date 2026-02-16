@@ -97,6 +97,12 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- **2026-02-16**: Added missing sections and finished incomplete items
+  - Added CTA (Call to Action) section to homepage
+  - Created Privacy Policy page (`/privacy`) and Terms of Service page (`/terms`)
+  - Added "About Us" link to navbar navigation
+  - Made floating action button functional (opens chat widget)
+  - Soft UI styling: softer shadows, rounded corners, improved typography, section spacing
 - **2026-02-14**: Migrated back to Supabase from Express + Drizzle ORM backend
   - Restored Supabase Auth for authentication (email/password)
   - Replaced all Express API calls with direct Supabase client queries
