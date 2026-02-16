@@ -29,6 +29,8 @@ import Auth from "./pages/Auth";
 import StoneVisualizerPage from "./pages/StoneVisualizerPage";
 import AboutPage from "./pages/AboutPage";
 import PaymentPage from "./pages/PaymentPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsOfServicePage from "./pages/TermsOfServicePage";
 import NotFound from "./pages/NotFound";
 
 // Admin Pages
@@ -78,6 +80,8 @@ const App = () => (
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/chat" element={<ChatPage />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/privacy" element={<PrivacyPolicyPage />} />
+                <Route path="/terms" element={<TermsOfServicePage />} />
 
                 {/* Protected Routes */}
                 <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />

@@ -39,6 +39,7 @@ export function Navbar() {
     { name: t('nav.visualizer'), href: '/visualizer' },
     { name: t('nav.estimation'), href: '/estimation' },
     { name: t('nav.catalogs'), href: '/catalogs' },
+    { name: t('footer.about'), href: '/about' },
     { name: t('nav.contact'), href: '/contact' },
   ];
 

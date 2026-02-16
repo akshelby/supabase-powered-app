@@ -7,6 +7,7 @@ import {
   FeaturedProducts,
   ServicesSection,
   TestimonialsSection,
+  CTASection,
 } from '@/components/home';
 
 export default function HomePage() {
@@ -19,6 +20,7 @@ export default function HomePage() {
       <FeaturedProducts />
       <ServicesSection />
       <TestimonialsSection />
+      <CTASection />
     </MainLayout>
   );
 }
