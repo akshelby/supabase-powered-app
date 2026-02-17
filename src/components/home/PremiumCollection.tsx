@@ -31,6 +31,15 @@ const productImages: Record<string, string> = {
   'green-galaxy-granite': greenGraniteImg,
 };
 
+const fallbackProducts: CollectionProduct[] = [
+  { id: 'fb-1', name: 'Black Galaxy Granite', slug: 'black-galaxy-granite', price: 4500, images: [blackGraniteImg], is_active: true },
+  { id: 'fb-2', name: 'Absolute Black Granite', slug: 'absolute-black-granite', price: 3800, images: [blackGraniteImg], is_active: true },
+  { id: 'fb-3', name: 'Tan Brown Granite', slug: 'tan-brown-granite', price: 2800, images: [brownGraniteImg], is_active: true },
+  { id: 'fb-4', name: 'Blue Pearl Granite', slug: 'blue-pearl-granite', price: 5200, images: [bluePearlImg], is_active: true },
+  { id: 'fb-5', name: 'Green Galaxy Granite', slug: 'green-galaxy-granite', price: 3500, images: [greenGraniteImg], is_active: true },
+  { id: 'fb-6', name: 'Imperial Red Granite', slug: 'imperial-red-granite', price: 4000, images: [redGraniteImg], is_active: true },
+];
+
 function getProductImage(product: CollectionProduct): string {
   const slug = product.name?.toLowerCase().replace(/\s+/g, '-') || '';
   if (productImages[slug]) return productImages[slug];
@@ -65,13 +74,17 @@ export function PremiumCollection() {
           return;
         }
         const active = allProducts.filter((p: any) => p.is_active);
-        if (active.length > 0) setProducts(active.slice(0, 8));
+        if (active.length > 0) {
+          setProducts(active.slice(0, 8));
+        } else {
+          setProducts(fallbackProducts);
+        }
       } catch (err: any) {
-        if (!cancelled && attempt < 2 && err?.message?.includes('bort')) {
+        if (!cancelled && attempt < 2 && (err?.message?.includes('bort') || err?.message?.includes('Abort'))) {
           setTimeout(() => fetchProducts(attempt + 1), 500 * (attempt + 1));
           return;
         }
-        console.error('Error fetching premium collection:', err);
+        if (!cancelled) setProducts(fallbackProducts);
       }
     };
     fetchProducts();

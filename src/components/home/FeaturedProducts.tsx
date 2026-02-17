@@ -29,6 +29,15 @@ const productImages: Record<string, string> = {
   'green-galaxy-granite': greenGraniteImg,
 };
 
+const fallbackProducts: Product[] = [
+  { id: 'fb-1', name: 'Black Galaxy Granite', slug: 'black-galaxy-granite', description: 'Premium black granite with golden flecks', short_description: 'Premium black granite', price: 4500, compare_price: 5500, images: [blackGraniteImg], stock_quantity: 100, is_active: true, is_featured: true, category: { name: 'Granite' } } as Product,
+  { id: 'fb-2', name: 'Absolute Black Granite', slug: 'absolute-black-granite', description: 'Deep black granite for modern spaces', short_description: 'Deep black granite', price: 3800, compare_price: 4200, images: [blackGraniteImg], stock_quantity: 80, is_active: true, is_featured: true, category: { name: 'Granite' } } as Product,
+  { id: 'fb-3', name: 'Tan Brown Granite', slug: 'tan-brown-granite', description: 'Warm brown granite with natural patterns', short_description: 'Warm brown granite', price: 2800, compare_price: 3200, images: [brownGraniteImg], stock_quantity: 120, is_active: true, is_featured: true, category: { name: 'Granite' } } as Product,
+  { id: 'fb-4', name: 'Blue Pearl Granite', slug: 'blue-pearl-granite', description: 'Stunning blue granite with pearl-like shine', short_description: 'Blue pearl granite', price: 5200, compare_price: 6000, images: [bluePearlImg], stock_quantity: 50, is_active: true, is_featured: true, category: { name: 'Granite' } } as Product,
+  { id: 'fb-5', name: 'Green Galaxy Granite', slug: 'green-galaxy-granite', description: 'Exotic green granite with galaxy pattern', short_description: 'Green galaxy granite', price: 3500, compare_price: 4000, images: [greenGraniteImg], stock_quantity: 60, is_active: true, is_featured: true, category: { name: 'Granite' } } as Product,
+  { id: 'fb-6', name: 'Imperial Red Granite', slug: 'imperial-red-granite', description: 'Rich red granite for bold designs', short_description: 'Imperial red granite', price: 4000, compare_price: 4500, images: [redGraniteImg], stock_quantity: 70, is_active: true, is_featured: true, category: { name: 'Granite' } } as Product,
+];
+
 export function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const { addToCart } = useCart();
@@ -44,13 +53,19 @@ export function FeaturedProducts() {
         if (error) throw error;
         if (cancelled) return;
         const featured = (data || []).filter((p: any) => p.is_featured);
-        setProducts(featured.slice(0, 8) as Product[]);
+        if (featured.length > 0) {
+          setProducts(featured.slice(0, 8) as Product[]);
+        } else if (data && data.length > 0) {
+          setProducts(data.slice(0, 8) as Product[]);
+        } else {
+          setProducts(fallbackProducts);
+        }
       } catch (err: any) {
-        if (!cancelled && attempt < 2 && err?.message?.includes('bort')) {
+        if (!cancelled && attempt < 2 && (err?.message?.includes('bort') || err?.message?.includes('Abort'))) {
           setTimeout(() => fetchFeaturedProducts(attempt + 1), 500 * (attempt + 1));
           return;
         }
-        console.error('Error fetching featured products:', err);
+        if (!cancelled) setProducts(fallbackProducts);
       }
     };
     fetchFeaturedProducts();
