@@ -77,27 +77,27 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 navbar-dark-premium',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         isScrolled
-          ? 'navbar-dark-scrolled'
-          : ''
+          ? 'bg-background/90 backdrop-blur-xl shadow-soft border-b border-border/40'
+          : 'bg-transparent'
       )}
     >
       <div className="container mx-auto px-4">
         <nav className="flex items-center justify-between h-16 lg:h-20">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center navbar-logo-box">
+            <div className="w-10 h-10 bg-gradient-premium rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">SP</span>
             </div>
             <div className="hidden sm:block">
-              <h1 className="font-display text-xl font-bold navbar-brand-text">
+              <h1 className="font-display text-xl font-bold text-foreground">
                 SP Granites
               </h1>
-              <p className="text-xs navbar-sub-text -mt-1">Premium Stone Works</p>
+              <p className="text-xs text-muted-foreground -mt-1">Premium Stone Works</p>
             </div>
           </Link>
 
-          <div className="hidden lg:flex items-center gap-1.5 overflow-x-auto max-w-[calc(100%-360px)] scrollbar-hide navbar-nav-pill mr-2">
+          <div className="hidden lg:flex items-center gap-1.5 overflow-x-auto max-w-[calc(100%-360px)] scrollbar-hide border-2 border-gray-300 rounded-xl px-3 py-1.5 bg-gray-50/50 mr-2">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -108,10 +108,10 @@ export function Navbar() {
                   addTab(link.href, link.name);
                 }}
                 className={cn(
-                  'px-4 py-2.5 text-base font-medium rounded-lg transition-all whitespace-nowrap shrink-0',
+                  'px-4 py-2.5 text-base font-medium rounded-lg transition-colors whitespace-nowrap shrink-0',
                   location.pathname === link.href
-                    ? 'navbar-link-active'
-                    : 'navbar-link-inactive'
+                    ? 'text-white bg-primary shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                 )}
                 data-testid={`nav-${link.href.replace('/', '') || 'home'}`}
               >
@@ -120,10 +120,10 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center gap-1 sm:gap-2 navbar-actions">
+          <div className="flex items-center gap-1 sm:gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-1 px-2 navbar-icon-btn" data-testid="button-language-switcher">
+                <Button variant="ghost" size="sm" className="gap-1 px-2" data-testid="button-language-switcher">
                   <span className="text-xs font-semibold">{languages.find(l => l.code === i18n.language)?.short || 'ENG'}</span>
                   <svg className="h-3 w-3 opacity-60" viewBox="0 0 12 12" fill="none"><path d="M3 5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </Button>
@@ -147,13 +147,13 @@ export function Navbar() {
               variant="ghost"
               size="icon"
               onClick={toggleTheme}
-              className="flex navbar-icon-btn"
+              className="flex"
             >
               {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
 
             {user && (
-              <Button variant="ghost" size="icon" asChild className="hidden sm:flex navbar-icon-btn">
+              <Button variant="ghost" size="icon" asChild className="hidden sm:flex">
                 <Link to="/wishlist">
                   <Heart className="h-5 w-5" />
                 </Link>
@@ -164,11 +164,11 @@ export function Navbar() {
               variant="ghost"
               size="icon"
               onClick={() => setMiniCartOpen(true)}
-              className="relative navbar-icon-btn"
+              className="relative"
             >
               <ShoppingCart className="h-5 w-5" />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 navbar-cart-badge text-xs rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
@@ -177,7 +177,7 @@ export function Navbar() {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="navbar-icon-btn">
+                  <Button variant="ghost" size="icon">
                     <User className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -209,7 +209,7 @@ export function Navbar() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild size="sm" className="navbar-signin-btn">
+              <Button asChild size="sm">
                 <Link to="/auth">{t('nav.signIn')}</Link>
               </Button>
             )}
@@ -217,7 +217,7 @@ export function Navbar() {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden navbar-icon-btn"
+              className="lg:hidden"
               onClick={() => setIsOpen(!isOpen)}
             >
               {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -232,7 +232,7 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden navbar-mobile-menu"
+            className="lg:hidden bg-background border-t border-border"
           >
             <div className="container mx-auto px-4 py-4 space-y-2">
               {navLinks.map((link) => (
@@ -246,10 +246,10 @@ export function Navbar() {
                     setIsOpen(false);
                   }}
                   className={cn(
-                    'block px-4 py-3 rounded-lg text-sm font-medium transition-all',
+                    'block px-4 py-3 rounded-lg text-sm font-medium transition-colors',
                     location.pathname === link.href
-                      ? 'navbar-link-active'
-                      : 'navbar-mobile-link'
+                      ? 'text-white bg-primary shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                   )}
                 >
                   {link.name}
