@@ -85,17 +85,24 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4">
         <nav className="flex items-center justify-between h-16 lg:h-20">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-premium rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">SP</span>
-            </div>
-            <div className="hidden sm:block">
-              <h1 className="font-display text-xl font-bold text-foreground">
-                SP Granites
-              </h1>
-              <p className="text-xs text-muted-foreground -mt-1">Premium Stone Works</p>
-            </div>
-          </Link>
+          <div className="flex flex-col items-start">
+            <Link to="/" className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-gradient-premium rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">SP</span>
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="font-display text-xl font-bold text-foreground">
+                  SP Granites
+                </h1>
+                <p className="text-xs text-muted-foreground -mt-1">Premium Stone Works</p>
+              </div>
+            </Link>
+            {!user && (
+              <Button asChild size="sm" className="mt-1 h-6 text-xs px-3 hidden lg:inline-flex">
+                <Link to="/auth">{t('nav.signIn')}</Link>
+              </Button>
+            )}
+          </div>
 
           <div className="hidden lg:flex items-center gap-1.5 overflow-x-auto max-w-[calc(100%-360px)] scrollbar-hide border-2 border-gray-300 rounded-xl px-3 py-1.5 bg-gray-50/50 mr-2">
             {navLinks.map((link) => (
@@ -209,7 +216,7 @@ export function Navbar() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild size="sm">
+              <Button asChild size="sm" className="lg:hidden">
                 <Link to="/auth">{t('nav.signIn')}</Link>
               </Button>
             )}
