@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 430" width="460" height="430">
+  <!-- Left red triangle (pointing right) -->
+  <polygon points="55,35 55,395 280,215" fill="none" stroke="#ef4444" stroke-width="17" stroke-linejoin="miter"/>
+  <!-- Right red triangle (pointing left) -->
+  <polygon points="405,35 405,395 180,215" fill="none" stroke="#ef4444" stroke-width="17" stroke-linejoin="miter"/>
+
+  <!-- Large black shape - wide diagonal band/arrow from top-right to bottom-left -->
+  <polygon points="5,395 5,260 115,175 330,80 445,80 445,160 345,245 120,340" fill="#0a0a0a"/>
+
+  <!-- Purple accent line along upper-left edge -->
+  <line x1="5" y1="260" x2="445" y2="80" stroke="#6d28d9" stroke-width="3.5"/>
+
+  <!-- Inner subtle layer for depth -->
+  <polygon points="25,370 25,280 130,195 340,100 430,100 430,145 335,230 130,320" fill="#161616"/>
+
+  <!-- Red accent triangle bottom-left -->
+  <polygon points="65,300 155,365 65,385" fill="#ef4444"/>
+
+  <!-- Red accent triangle top-right -->
+  <polygon points="335,75 405,42 400,130" fill="#ef4444"/>
+</svg>
