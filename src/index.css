@@ -4,6 +4,82 @@
 
 /* SP Granites Design System - Premium Stone-Inspired Theme */
 
+/* ===== Dark Premium Navbar ===== */
+.navbar-dark-premium {
+  background: linear-gradient(135deg, #0d0b2e 0%, #1a1145 50%, #13103a 100%);
+  border-bottom: 1px solid rgba(124, 58, 237, 0.15);
+}
+.navbar-dark-scrolled {
+  background: linear-gradient(135deg, #0d0b2eee 0%, #1a1145ee 50%, #13103aee 100%) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3), 0 0 40px rgba(124, 58, 237, 0.08);
+}
+.navbar-logo-box {
+  background: linear-gradient(135deg, #00e89d, #00c9ff);
+  box-shadow: 0 0 12px rgba(0, 232, 157, 0.3);
+}
+.navbar-brand-text {
+  color: #ffffff !important;
+}
+.navbar-sub-text {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+.navbar-nav-pill {
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+.navbar-link-active {
+  background: linear-gradient(135deg, #00e89d, #00c9ff) !important;
+  color: #0d0b2e !important;
+  font-weight: 600;
+  box-shadow: 0 0 16px rgba(0, 232, 157, 0.25);
+}
+.navbar-link-inactive {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+.navbar-link-inactive:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+.navbar-icon-btn {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+.navbar-icon-btn:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+.navbar-cart-badge {
+  background: linear-gradient(135deg, #00e89d, #00c9ff);
+  color: #0d0b2e;
+  font-weight: 700;
+}
+.navbar-signin-btn {
+  background: linear-gradient(135deg, #00e89d, #00c9ff) !important;
+  color: #0d0b2e !important;
+  font-weight: 600 !important;
+  border: none !important;
+  box-shadow: 0 0 16px rgba(0, 232, 157, 0.2);
+}
+.navbar-signin-btn:hover {
+  box-shadow: 0 0 24px rgba(0, 232, 157, 0.35) !important;
+  opacity: 0.9;
+}
+.navbar-mobile-menu {
+  background: linear-gradient(180deg, #1a1145, #0d0b2e);
+  border-top: 1px solid rgba(124, 58, 237, 0.2);
+}
+.navbar-mobile-link {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+.navbar-mobile-link:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+/* ===== End Dark Premium Navbar ===== */
+
 @layer base {
   :root {
     /* Light Theme - Premium Soft UI */
