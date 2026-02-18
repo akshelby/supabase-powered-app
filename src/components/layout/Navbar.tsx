@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ShoppingCart, Heart, User, Sun, Moon, Globe } from 'lucide-react';
+import { Menu, X, ShoppingCart, Heart, User, Sun, Moon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,9 +17,9 @@ import { useTabs } from '@/contexts/TabContext';
 import { cn } from '@/lib/utils';
 
 const languages = [
-  { code: 'en', label: 'English', flag: 'EN' },
-  { code: 'hi', label: 'हिन्दी', flag: 'HI' },
-  { code: 'kn', label: 'ಕನ್ನಡ', flag: 'KN' },
+  { code: 'en', label: 'English', flag: '🇮🇳', short: 'EN' },
+  { code: 'hi', label: 'हिन्दी', flag: '🇮🇳', short: 'HI' },
+  { code: 'kn', label: 'ಕನ್ನಡ', flag: '🇮🇳', short: 'KN' },
 ];
 
 export function Navbar() {
@@ -123,8 +123,10 @@ export function Navbar() {
           <div className="flex items-center gap-1 sm:gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" data-testid="button-language-switcher">
-                  <Globe className="h-5 w-5" />
+                <Button variant="ghost" size="sm" className="gap-1 px-2" data-testid="button-language-switcher">
+                  <span className="text-base leading-none">{languages.find(l => l.code === i18n.language)?.flag || '🇮🇳'}</span>
+                  <span className="text-xs font-semibold">{languages.find(l => l.code === i18n.language)?.short || 'EN'}</span>
+                  <svg className="h-3 w-3 opacity-60" viewBox="0 0 12 12" fill="none"><path d="M3 5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
@@ -138,8 +140,11 @@ export function Navbar() {
                     )}
                     data-testid={`button-lang-${lang.code}`}
                   >
-                    <span>{lang.label}</span>
-                    <span className="text-xs font-mono text-muted-foreground">{lang.flag}</span>
+                    <span className="flex items-center gap-2">
+                      <span className="text-base leading-none">{lang.flag}</span>
+                      <span>{lang.label}</span>
+                    </span>
+                    <span className="text-xs font-mono text-muted-foreground">{lang.short}</span>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
