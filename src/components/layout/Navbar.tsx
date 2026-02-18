@@ -98,7 +98,7 @@ export function Navbar() {
               </div>
             </Link>
             {!user && (
-              <Button asChild size="sm" className="mt-1 h-6 text-xs px-3 hidden lg:inline-flex">
+              <Button asChild size="sm" className="mt-1 h-5 text-[10px] px-2 hidden lg:inline-flex">
                 <Link to="/auth">{t('nav.signIn')}</Link>
               </Button>
             )}
