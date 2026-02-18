@@ -38,6 +38,10 @@ const fallbackProducts: CollectionProduct[] = [
   { id: 'fb-4', name: 'Blue Pearl Granite', slug: 'blue-pearl-granite', price: 5200, images: [bluePearlImg], is_active: true },
   { id: 'fb-5', name: 'Green Galaxy Granite', slug: 'green-galaxy-granite', price: 3500, images: [greenGraniteImg], is_active: true },
   { id: 'fb-6', name: 'Imperial Red Granite', slug: 'imperial-red-granite', price: 4000, images: [redGraniteImg], is_active: true },
+  { id: 'fb-7', name: 'Kashmir White Granite', slug: 'kashmir-white-granite', price: 3200, images: [greyGraniteImg], is_active: true },
+  { id: 'fb-8', name: 'Steel Grey Granite', slug: 'steel-grey-granite', price: 2900, images: [greyGraniteImg], is_active: true },
+  { id: 'fb-9', name: 'Red Granite', slug: 'red-granite', price: 3600, images: [redGraniteImg], is_active: true },
+  { id: 'fb-10', name: 'Brown Pearl Granite', slug: 'brown-pearl-granite', price: 3100, images: [brownGraniteImg], is_active: true },
 ];
 
 function getProductImage(product: CollectionProduct): string {
@@ -70,12 +74,12 @@ export function PremiumCollection() {
         const allProducts = data || [];
         const featured = allProducts.filter((p: any) => p.is_featured && p.is_active);
         if (featured.length > 0) {
-          setProducts(featured.slice(0, 8));
+          setProducts(featured.slice(0, 10));
           return;
         }
         const active = allProducts.filter((p: any) => p.is_active);
         if (active.length > 0) {
-          setProducts(active.slice(0, 8));
+          setProducts(active.slice(0, 10));
         } else {
           setProducts(fallbackProducts);
         }
