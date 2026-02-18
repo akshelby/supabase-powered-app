@@ -4,6 +4,39 @@
 
 /* SP Granites Design System - Premium Stone-Inspired Theme */
 
+/* ===== CTA Ribbon Buttons ===== */
+.cta-ribbon-btn {
+  position: relative;
+  display: inline-flex;
+  background: #dc2626;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.85rem 2.5rem;
+  clip-path: polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+.cta-ribbon-btn:hover {
+  background: #b91c1c;
+  transform: scale(1.04);
+}
+.cta-ribbon-btn-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cta-ribbon-btn-outline {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+}
+.cta-ribbon-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+/* ===== End CTA Ribbon Buttons ===== */
 
 @layer base {
   :root {

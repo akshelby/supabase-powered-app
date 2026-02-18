@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Phone } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
+
 
 export function CTASection() {
   const { t } = useTranslation();
@@ -28,29 +28,27 @@ export function CTASection() {
           <p className="text-xs sm:text-sm lg:text-base opacity-85 mb-3 sm:mb-6">
             {t('cta.subtitle')}
           </p>
-          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center items-center">
-            <Button
-              size="lg"
-              asChild
-              className="group w-full sm:w-auto text-xs sm:text-sm bg-white text-primary border border-white hover:bg-white/90 hover:text-primary"
+          <div className="flex flex-col sm:flex-row flex-wrap gap-5 sm:gap-6 justify-center items-center">
+            <Link
+              to="/estimation"
+              className="cta-ribbon-btn group"
               data-testid="button-cta-estimation"
             >
-              <Link to="/estimation">
+              <span className="cta-ribbon-btn-inner">
                 {t('cta.getEstimation')}
-                <ArrowRight className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </Button>
-            <Button
-              size="lg"
-              asChild
-              className="w-full sm:w-auto bg-transparent border border-white/60 text-white text-xs sm:text-sm"
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </Link>
+            <a
+              href="tel:+919876543210"
+              className="cta-ribbon-btn cta-ribbon-btn-outline group"
               data-testid="button-cta-call"
             >
-              <a href="tel:+919876543210">
-                <Phone className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span className="cta-ribbon-btn-inner">
+                <Phone className="mr-2 h-4 w-4" />
                 {t('cta.callUs')}
-              </a>
-            </Button>
+              </span>
+            </a>
           </div>
         </motion.div>
       </div>
