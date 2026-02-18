@@ -97,7 +97,7 @@ export function Navbar() {
             </div>
           </Link>
 
-          <div className="hidden lg:flex items-center gap-1.5 overflow-x-auto max-w-[calc(100%-320px)] scrollbar-hide border-2 border-gray-300 rounded-xl px-3 py-1.5 bg-gray-50/50">
+          <div className="hidden lg:flex items-center gap-1.5 overflow-x-auto max-w-[calc(100%-360px)] scrollbar-hide border-2 border-gray-300 rounded-xl px-3 py-1.5 bg-gray-50/50 mr-2">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
