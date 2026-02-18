@@ -17,9 +17,9 @@ import { useTabs } from '@/contexts/TabContext';
 import { cn } from '@/lib/utils';
 
 const languages = [
-  { code: 'en', label: 'English', short: 'EN' },
-  { code: 'hi', label: 'हिन्दी', short: 'HI' },
-  { code: 'kn', label: 'ಕನ್ನಡ', short: 'KN' },
+  { code: 'en', label: 'English', short: 'ENG' },
+  { code: 'hi', label: 'हिन्दी', short: 'हिन्दी' },
+  { code: 'kn', label: 'ಕನ್ನಡ', short: 'ಕನ್ನಡ' },
 ];
 
 export function Navbar() {
@@ -124,7 +124,7 @@ export function Navbar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="gap-1 px-2" data-testid="button-language-switcher">
-                  <span className="text-xs font-semibold">{i18n.language === 'en' ? 'HI' : i18n.language === 'hi' ? 'EN' : 'EN'}</span>
+                  <span className="text-xs font-semibold">{languages.find(l => l.code === i18n.language)?.short || 'ENG'}</span>
                   <svg className="h-3 w-3 opacity-60" viewBox="0 0 12 12" fill="none"><path d="M3 5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </Button>
               </DropdownMenuTrigger>
