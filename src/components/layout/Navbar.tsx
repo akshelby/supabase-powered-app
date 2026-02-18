@@ -124,19 +124,16 @@ export function Navbar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="gap-1 px-2" data-testid="button-language-switcher">
-                  <span className="text-xs font-semibold">{languages.find(l => l.code === i18n.language)?.short || 'EN'}</span>
+                  <span className="text-xs font-semibold">{i18n.language === 'en' ? 'HI' : i18n.language === 'hi' ? 'EN' : 'EN'}</span>
                   <svg className="h-3 w-3 opacity-60" viewBox="0 0 12 12" fill="none"><path d="M3 5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
-                {languages.map((lang) => (
+                {languages.filter((lang) => lang.code !== i18n.language).map((lang) => (
                   <DropdownMenuItem
                     key={lang.code}
                     onClick={() => changeLanguage(lang.code)}
-                    className={cn(
-                      'flex items-center justify-between gap-2',
-                      i18n.language === lang.code && 'bg-primary/10 text-primary'
-                    )}
+                    className="flex items-center justify-between gap-2"
                     data-testid={`button-lang-${lang.code}`}
                   >
                     <span>{lang.label}</span>
