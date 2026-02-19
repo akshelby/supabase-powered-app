@@ -68,6 +68,7 @@ export function PremiumCollection() {
   const isHorizontalSwipe = useRef<boolean | null>(null);
   const animFrameRef = useRef<number | null>(null);
   const momentumFrameRef = useRef<number | null>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -114,6 +115,20 @@ export function PremiumCollection() {
   const applyRotation = useCallback(() => {
     if (!spinnerRef.current) return;
     spinnerRef.current.style.transform = `translateX(-50%) translateY(-50%) rotateY(${rotationRef.current}deg)`;
+
+    const count = cardRefs.current.length;
+    if (count === 0) return;
+    const perCard = 360 / count;
+    for (let i = 0; i < count; i++) {
+      const el = cardRefs.current[i];
+      if (!el) continue;
+      let cardAngle = ((i * perCard + rotationRef.current) % 360 + 360) % 360;
+      const dist = cardAngle > 180 ? 360 - cardAngle : cardAngle;
+      const opacity = 0.25 + 0.75 * Math.pow(1 - dist / 180, 1.5);
+      const scale = 0.85 + 0.15 * (1 - dist / 180);
+      el.style.opacity = `${opacity}`;
+      el.style.transform = `rotateY(${i * perCard}deg) translateZ(${Number(el.dataset.radius)}px) scale(${scale})`;
+    }
   }, []);
 
   useEffect(() => {
@@ -272,7 +287,9 @@ export function PremiumCollection() {
               return (
                 <div
                   key={product.id}
+                  ref={(el) => { cardRefs.current[index] = el; }}
                   className="absolute"
+                  data-radius={radius}
                   style={{
                     width: `${cardW}px`,
                     height: `${cardH}px`,
@@ -280,6 +297,7 @@ export function PremiumCollection() {
                     top: `${-cardH / 2}px`,
                     transformStyle: 'preserve-3d',
                     transform: `rotateY(${angle}deg) translateZ(${radius}px)`,
+                    transition: 'opacity 0.1s ease',
                   }}
                 >
                   <Link
