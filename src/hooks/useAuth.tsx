@@ -26,7 +26,24 @@ function mapUser(user: User | null): AuthUser | null {
   return { id: user.id, email: user.email || '' };
 }
 
-async function fetchRole(userId: string): Promise<AppRole> {
+const ADMIN_EMAILS = ['spgranites9999@gmail.com'];
+
+async function ensureAdminRole(userId: string, email: string): Promise<void> {
+  if (!ADMIN_EMAILS.includes(email.toLowerCase())) return;
+  const { data } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (!data) {
+    await (supabase.from('user_roles') as any).insert({ user_id: userId, role: 'admin' });
+  } else if (data.role !== 'admin') {
+    await (supabase.from('user_roles') as any).update({ role: 'admin' }).eq('user_id', userId);
+  }
+}
+
+async function fetchRole(userId: string, email?: string): Promise<AppRole> {
+  if (email) await ensureAdminRole(userId, email);
   const { data } = await supabase
     .from('user_roles')
     .select('role')
@@ -52,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const mapped = mapUser(s?.user ?? null);
       setUser(mapped);
       if (mapped) {
-        const r = await fetchRole(mapped.id);
+        const r = await fetchRole(mapped.id, mapped.email);
         setRole(r);
       }
       setLoading(false);
@@ -66,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const mapped = mapUser(s?.user ?? null);
       setUser(mapped);
       if (mapped) {
-        const r = await fetchRole(mapped.id);
+        const r = await fetchRole(mapped.id, mapped.email);
         setRole(r);
       } else {
         setRole(null);
