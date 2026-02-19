@@ -53,16 +53,21 @@ function getProductImage(product: CollectionProduct): string {
 
 export function PremiumCollection() {
   const [products, setProducts] = useState<CollectionProduct[]>(fallbackProducts);
-  const [rotation, setRotation] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [startRotation, setStartRotation] = useState(0);
-  const [autoRotate, setAutoRotate] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const spinnerRef = useRef<HTMLDivElement>(null);
+  const rotationRef = useRef(0);
+  const autoRotateRef = useRef(true);
+  const isDraggingRef = useRef(false);
   const velocityRef = useRef(0);
   const lastMoveRef = useRef({ x: 0, time: 0 });
-  const momentumRef = useRef<number | null>(null);
+  const startXRef = useRef(0);
+  const startRotRef = useRef(0);
   const pointerStartY = useRef(0);
   const isHorizontalSwipe = useRef<boolean | null>(null);
+  const animFrameRef = useRef<number | null>(null);
+  const momentumFrameRef = useRef<number | null>(null);
+
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -96,17 +101,40 @@ export function PremiumCollection() {
   }, []);
 
   useEffect(() => {
-    if (!autoRotate || isDragging || products.length === 0) return;
-    const interval = setInterval(() => {
-      setRotation(prev => prev - 0.6);
-    }, 16);
-    return () => clearInterval(interval);
-  }, [autoRotate, isDragging, products.length]);
+    const check = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  const applyRotation = useCallback(() => {
+    if (!spinnerRef.current) return;
+    spinnerRef.current.style.transform = `translateX(-50%) translateY(-50%) rotateY(${rotationRef.current}deg)`;
+  }, []);
+
+  useEffect(() => {
+    let lastTime = performance.now();
+    const tick = (now: number) => {
+      const dt = now - lastTime;
+      lastTime = now;
+      if (autoRotateRef.current && !isDraggingRef.current && products.length > 0) {
+        rotationRef.current -= 0.6 * (dt / 16);
+        applyRotation();
+      }
+      animFrameRef.current = requestAnimationFrame(tick);
+    };
+    animFrameRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, [products.length, applyRotation]);
 
   const stopMomentum = useCallback(() => {
-    if (momentumRef.current) {
-      cancelAnimationFrame(momentumRef.current);
-      momentumRef.current = null;
+    if (momentumFrameRef.current) {
+      cancelAnimationFrame(momentumFrameRef.current);
+      momentumFrameRef.current = null;
     }
   }, []);
 
@@ -117,37 +145,38 @@ export function PremiumCollection() {
     const tick = () => {
       v *= friction;
       if (Math.abs(v) < 0.05) {
-        setTimeout(() => setAutoRotate(true), 2000);
+        setTimeout(() => { autoRotateRef.current = true; }, 2000);
         return;
       }
-      setRotation(prev => prev + v);
-      momentumRef.current = requestAnimationFrame(tick);
+      rotationRef.current += v;
+      applyRotation();
+      momentumFrameRef.current = requestAnimationFrame(tick);
     };
-    momentumRef.current = requestAnimationFrame(tick);
-  }, [stopMomentum]);
+    momentumFrameRef.current = requestAnimationFrame(tick);
+  }, [stopMomentum, applyRotation]);
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     stopMomentum();
-    setAutoRotate(false);
-    setStartX(e.clientX);
-    setStartRotation(rotation);
+    autoRotateRef.current = false;
+    startXRef.current = e.clientX;
+    startRotRef.current = rotationRef.current;
     velocityRef.current = 0;
     lastMoveRef.current = { x: e.clientX, time: performance.now() };
     pointerStartY.current = e.clientY;
     isHorizontalSwipe.current = null;
-  }, [rotation, stopMomentum]);
+  }, [stopMomentum]);
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     if (isHorizontalSwipe.current === false) return;
 
-    const dx = Math.abs(e.clientX - startX);
+    const dx = Math.abs(e.clientX - startXRef.current);
     const dy = Math.abs(e.clientY - pointerStartY.current);
 
     if (isHorizontalSwipe.current === null) {
       if (dx + dy < 8) return;
       if (dx > dy) {
         isHorizontalSwipe.current = true;
-        setIsDragging(true);
+        isDraggingRef.current = true;
         (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
       } else {
         isHorizontalSwipe.current = false;
@@ -157,39 +186,27 @@ export function PremiumCollection() {
 
     e.preventDefault();
     const now = performance.now();
-    const deltaX = e.clientX - startX;
+    const deltaX = e.clientX - startXRef.current;
     const sensitivity = 0.4;
-    setRotation(startRotation + deltaX * sensitivity);
+    rotationRef.current = startRotRef.current + deltaX * sensitivity;
+    applyRotation();
 
     const dt = now - lastMoveRef.current.time;
     if (dt > 0) {
       velocityRef.current = ((e.clientX - lastMoveRef.current.x) * sensitivity) / Math.max(dt / 16, 1);
     }
     lastMoveRef.current = { x: e.clientX, time: now };
-  }, [startX, startRotation]);
+  }, [applyRotation]);
 
   const handlePointerUp = useCallback(() => {
-    if (isDragging) {
-      setIsDragging(false);
+    if (isDraggingRef.current) {
+      isDraggingRef.current = false;
       startMomentum();
     } else {
-      setTimeout(() => setAutoRotate(true), 2000);
+      setTimeout(() => { autoRotateRef.current = true; }, 2000);
     }
     isHorizontalSwipe.current = null;
-  }, [isDragging, startMomentum]);
-
-  const [isMobile, setIsMobile] = useState(false);
-  const [, setWindowWidth] = useState(0);
-
-  useEffect(() => {
-    const check = () => {
-      setIsMobile(window.innerWidth < 640);
-      setWindowWidth(window.innerWidth);
-    };
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
+  }, [startMomentum]);
 
   const cardCount = products.length;
   if (cardCount === 0) return null;
@@ -224,11 +241,12 @@ export function PremiumCollection() {
         </motion.div>
 
         <div
+          ref={containerRef}
           className="relative mx-auto select-none"
           style={{
             height: `${containerH}px`,
             perspective: isMobile ? '800px' : isLargeDesktop ? '1800px' : isTablet ? '1400px' : '1200px',
-            cursor: isDragging ? 'grabbing' : 'grab',
+            cursor: 'grab',
             touchAction: 'pan-y',
           }}
           onPointerDown={handlePointerDown}
@@ -238,24 +256,21 @@ export function PremiumCollection() {
           data-testid="premium-collection-carousel"
         >
           <div
+            ref={spinnerRef}
             className="absolute left-1/2 top-1/2 w-0 h-0"
             style={{
               transformStyle: 'preserve-3d',
-              transform: `translateX(-50%) translateY(-50%) rotateY(${rotation}deg)`,
-              transition: isDragging ? 'none' : 'transform 0.1s linear',
+              transform: `translateX(-50%) translateY(-50%) rotateY(0deg)`,
+              willChange: 'transform',
             }}
           >
             {products.map((product, index) => {
               const angle = index * anglePerCard;
-              const cardRotation = angle + rotation;
-              const normalizedAngle = ((cardRotation % 360) + 360) % 360;
-              const deviationFromFront = normalizedAngle > 180 ? 360 - normalizedAngle : normalizedAngle;
-              const opacity = deviationFromFront < 90 ? 1 : Math.max(0, 1 - (deviationFromFront - 90) / 60);
 
               return (
                 <div
                   key={product.id}
-                  className="absolute"
+                  className="absolute backface-hidden"
                   style={{
                     width: `${cardW}px`,
                     height: `${cardH}px`,
@@ -263,18 +278,15 @@ export function PremiumCollection() {
                     top: `${-cardH / 2}px`,
                     transformStyle: 'preserve-3d',
                     transform: `rotateY(${angle}deg) translateZ(${radius}px)`,
-                    opacity,
-                    transition: 'opacity 0.3s ease',
+                    backfaceVisibility: 'hidden',
                   }}
                 >
                   <Link
                     to={`/products/${product.slug || product.id}`}
                     className={cn(
-                      'block w-full h-full rounded-xl overflow-hidden',
-                      'transition-shadow duration-300',
-                      deviationFromFront < 30 ? 'shadow-xl' : deviationFromFront < 90 ? 'shadow-lg' : 'shadow-md'
+                      'block w-full h-full rounded-xl overflow-hidden shadow-lg',
                     )}
-                    onClick={(e) => { if (isDragging) e.preventDefault(); }}
+                    onClick={(e) => { if (isDraggingRef.current) e.preventDefault(); }}
                     data-testid={`collection-card-${product.id}`}
                   >
                     <div className="relative w-full h-full">
