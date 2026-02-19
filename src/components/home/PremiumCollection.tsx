@@ -54,19 +54,18 @@ function getProductImage(product: CollectionProduct): string {
 
 export function PremiumCollection() {
   const [products, setProducts] = useState<CollectionProduct[]>(fallbackProducts);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const angleRef = useRef(0);
+  const discRef = useRef<HTMLDivElement>(null);
+  const rotationRef = useRef(0);
   const autoRotateRef = useRef(true);
   const isDraggingRef = useRef(false);
   const velocityRef = useRef(0);
   const lastMoveRef = useRef({ x: 0, time: 0 });
   const startXRef = useRef(0);
-  const startAngleRef = useRef(0);
+  const startRotRef = useRef(0);
   const pointerStartY = useRef(0);
   const isHorizontalSwipe = useRef<boolean | null>(null);
   const animFrameRef = useRef<number | null>(null);
   const momentumFrameRef = useRef<number | null>(null);
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -108,55 +107,28 @@ export function PremiumCollection() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  const cardCount = products.length;
-  const anglePerCard = cardCount > 0 ? 360 / cardCount : 30;
-
-  const radiusX = isMobile ? 160 : 340;
-  const radiusY = isMobile ? 100 : 180;
-  const cardW = isMobile ? 100 : 180;
-  const cardH = isMobile ? 140 : 240;
-  const containerH = isMobile ? 340 : 520;
-
-  const applyPositions = useCallback(() => {
-    if (!cardsRef.current || cardCount === 0) return;
-
-    cardsRef.current.forEach((card, i) => {
-      if (!card) return;
-      const cardAngle = angleRef.current + i * anglePerCard;
-      const rad = (cardAngle * Math.PI) / 180;
-
-      const x = Math.sin(rad) * radiusX;
-      const y = -Math.cos(rad) * radiusY;
-
-      const depthFactor = (Math.cos(rad) + 1) / 2;
-      const scale = 0.55 + depthFactor * 0.45;
-      const zIndex = Math.round(depthFactor * 100);
-      const opacity = 0.4 + depthFactor * 0.6;
-
-      card.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
-      card.style.opacity = `${opacity}`;
-      card.style.zIndex = `${zIndex}`;
-      card.style.filter = depthFactor > 0.6 ? 'none' : `brightness(${0.4 + depthFactor * 0.6})`;
-    });
-  }, [cardCount, anglePerCard, radiusX, radiusY]);
+  const applyRotation = useCallback(() => {
+    if (!discRef.current) return;
+    discRef.current.style.transform = `rotateX(65deg) rotateZ(${rotationRef.current}deg)`;
+  }, []);
 
   useEffect(() => {
     let lastTime = performance.now();
     const tick = (now: number) => {
       const dt = now - lastTime;
       lastTime = now;
-      if (autoRotateRef.current && !isDraggingRef.current && cardCount > 0) {
-        angleRef.current += 0.3 * (dt / 16);
-        applyPositions();
+      if (autoRotateRef.current && !isDraggingRef.current && products.length > 0) {
+        rotationRef.current += 0.25 * (dt / 16);
+        applyRotation();
       }
       animFrameRef.current = requestAnimationFrame(tick);
     };
-    applyPositions();
+    applyRotation();
     animFrameRef.current = requestAnimationFrame(tick);
     return () => {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [cardCount, applyPositions]);
+  }, [products.length, applyRotation]);
 
   const stopMomentum = useCallback(() => {
     if (momentumFrameRef.current) {
@@ -175,18 +147,18 @@ export function PremiumCollection() {
         setTimeout(() => { autoRotateRef.current = true; }, 2000);
         return;
       }
-      angleRef.current += v;
-      applyPositions();
+      rotationRef.current += v;
+      applyRotation();
       momentumFrameRef.current = requestAnimationFrame(tick);
     };
     momentumFrameRef.current = requestAnimationFrame(tick);
-  }, [stopMomentum, applyPositions]);
+  }, [stopMomentum, applyRotation]);
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     stopMomentum();
     autoRotateRef.current = false;
     startXRef.current = e.clientX;
-    startAngleRef.current = angleRef.current;
+    startRotRef.current = rotationRef.current;
     velocityRef.current = 0;
     lastMoveRef.current = { x: e.clientX, time: performance.now() };
     pointerStartY.current = e.clientY;
@@ -195,10 +167,8 @@ export function PremiumCollection() {
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     if (isHorizontalSwipe.current === false) return;
-
     const dx = Math.abs(e.clientX - startXRef.current);
     const dy = Math.abs(e.clientY - pointerStartY.current);
-
     if (isHorizontalSwipe.current === null) {
       if (dx + dy < 8) return;
       if (dx > dy) {
@@ -210,20 +180,18 @@ export function PremiumCollection() {
         return;
       }
     }
-
     e.preventDefault();
     const now = performance.now();
     const deltaX = e.clientX - startXRef.current;
-    const sensitivity = 0.3;
-    angleRef.current = startAngleRef.current + deltaX * sensitivity;
-    applyPositions();
-
+    const sensitivity = 0.4;
+    rotationRef.current = startRotRef.current + deltaX * sensitivity;
+    applyRotation();
     const dt = now - lastMoveRef.current.time;
     if (dt > 0) {
       velocityRef.current = ((e.clientX - lastMoveRef.current.x) * sensitivity) / Math.max(dt / 16, 1);
     }
     lastMoveRef.current = { x: e.clientX, time: now };
-  }, [applyPositions]);
+  }, [applyRotation]);
 
   const handlePointerUp = useCallback(() => {
     if (isDraggingRef.current) {
@@ -235,7 +203,14 @@ export function PremiumCollection() {
     isHorizontalSwipe.current = null;
   }, [startMomentum]);
 
+  const cardCount = products.length;
   if (cardCount === 0) return null;
+
+  const anglePerCard = 360 / cardCount;
+  const cardW = isMobile ? 80 : 140;
+  const cardH = isMobile ? 100 : 180;
+  const radius = isMobile ? 160 : 320;
+  const containerH = isMobile ? 340 : 550;
 
   return (
     <section className="py-8 sm:py-14 md:py-16 bg-muted/30 overflow-hidden">
@@ -251,17 +226,18 @@ export function PremiumCollection() {
             Premium Collection
           </h2>
           <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-muted-foreground">
-            Swipe to rotate
+            Swipe to spin the disc
           </p>
         </motion.div>
 
         <div
-          ref={containerRef}
+          ref={(el) => { if (el) el.style.perspective = isMobile ? '800px' : '1200px'; }}
           className="relative mx-auto select-none"
           style={{
             height: `${containerH}px`,
             cursor: 'grab',
             touchAction: 'pan-y',
+            perspectiveOrigin: '50% 40%',
           }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
@@ -270,63 +246,64 @@ export function PremiumCollection() {
           data-testid="premium-collection-carousel"
         >
           <div
+            ref={discRef}
             className="absolute left-1/2 top-1/2"
-            style={{ width: 0, height: 0 }}
-          >
-            {products.map((product, index) => (
-              <div
-                key={product.id}
-                ref={(el) => { cardsRef.current[index] = el; }}
-                className="absolute"
-                style={{
-                  width: `${cardW}px`,
-                  height: `${cardH}px`,
-                  left: `${-cardW / 2}px`,
-                  top: `${-cardH / 2}px`,
-                  willChange: 'transform, opacity',
-                  transition: 'filter 0.3s ease',
-                }}
-              >
-                <Link
-                  to={`/products/${product.slug || product.id}`}
-                  className="block w-full h-full rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow"
-                  onClick={(e) => { if (isDraggingRef.current) e.preventDefault(); }}
-                  data-testid={`collection-card-${product.id}`}
-                >
-                  <div className="relative w-full h-full">
-                    <img
-                      src={getProductImage(product)}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                      draggable={false}
-                      onError={(e) => { (e.target as HTMLImageElement).src = blackGraniteImg; }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3">
-                      <h3 className="text-white text-[11px] sm:text-sm font-semibold leading-tight">
-                        {product.name}
-                      </h3>
-                      {product.price && (
-                        <p className="text-white/80 text-[10px] sm:text-xs mt-0.5">
-                          ₹{Number(product.price).toLocaleString('en-IN')}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            ))}
-          </div>
-
-          <div
-            className="absolute left-1/2 -translate-x-1/2 bottom-4 sm:bottom-6"
             style={{
-              width: `${radiusX * 2 + cardW}px`,
-              height: '12px',
-              borderRadius: '50%',
-              background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.08) 0%, transparent 70%)',
+              width: 0,
+              height: 0,
+              transformStyle: 'preserve-3d',
+              transform: `rotateX(65deg) rotateZ(0deg)`,
+              willChange: 'transform',
+              marginLeft: 0,
+              marginTop: 0,
             }}
-          />
+          >
+            {products.map((product, index) => {
+              const angle = index * anglePerCard;
+              return (
+                <div
+                  key={product.id}
+                  className="absolute"
+                  style={{
+                    width: `${cardW}px`,
+                    height: `${cardH}px`,
+                    left: `${-cardW / 2}px`,
+                    top: `${-cardH / 2}px`,
+                    transform: `rotateZ(${angle}deg) translateY(${-radius}px) rotateZ(${-angle}deg) rotateX(-65deg)`,
+                    transformStyle: 'preserve-3d',
+                  }}
+                >
+                  <Link
+                    to={`/products/${product.slug || product.id}`}
+                    className="block w-full h-full rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow"
+                    onClick={(e) => { if (isDraggingRef.current) e.preventDefault(); }}
+                    data-testid={`collection-card-${product.id}`}
+                  >
+                    <div className="relative w-full h-full">
+                      <img
+                        src={getProductImage(product)}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                        draggable={false}
+                        onError={(e) => { (e.target as HTMLImageElement).src = blackGraniteImg; }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-1.5 sm:p-2.5">
+                        <h3 className="text-white text-[9px] sm:text-xs font-semibold leading-tight">
+                          {product.name}
+                        </h3>
+                        {product.price && (
+                          <p className="text-white/80 text-[8px] sm:text-[11px] mt-0.5">
+                            ₹{Number(product.price).toLocaleString('en-IN')}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
