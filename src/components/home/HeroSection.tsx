@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight, Gem } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -68,8 +68,31 @@ export function HeroSection() {
     }
   };
 
-  const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % cards.length);
-  const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + cards.length) % cards.length);
+  const nextSlide = useCallback(() => setCurrentIndex((prev) => (prev + 1) % cards.length), [cards.length]);
+  const prevSlide = useCallback(() => setCurrentIndex((prev) => (prev - 1 + cards.length) % cards.length), [cards.length]);
+
+  const getCardStyle = (index: number) => {
+    const total = cards.length;
+    let offset = index - currentIndex;
+    if (offset > total / 2) offset -= total;
+    if (offset < -total / 2) offset += total;
+
+    const absOffset = Math.abs(offset);
+    const angle = offset * 45;
+    const translateX = offset * 35;
+    const translateZ = -absOffset * 120;
+    const opacity = absOffset > 2 ? 0 : 1 - absOffset * 0.3;
+    const scale = 1 - absOffset * 0.12;
+    const zIndex = total - absOffset;
+
+    return {
+      transform: `perspective(1000px) translateX(${translateX}%) rotateY(${angle}deg) translateZ(${translateZ}px) scale(${scale})`,
+      opacity: Math.max(0, opacity),
+      zIndex,
+      transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+      pointerEvents: (absOffset === 0 ? 'auto' : 'none') as React.CSSProperties['pointerEvents'],
+    };
+  };
 
   return (
     <section className="relative min-h-[55vh] sm:min-h-[70vh] lg:min-h-[80vh] flex items-center overflow-hidden bg-background" data-testid="hero-section">
@@ -157,45 +180,36 @@ export function HeroSection() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="relative h-[250px] sm:h-[350px] lg:h-[500px]"
+            className="relative h-[300px] sm:h-[400px] lg:h-[500px]"
             data-testid="hero-carousel"
           >
-            <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-lg">
-              <AnimatePresence initial={false}>
-                {cards.length > 0 && (
-                  <motion.div
-                    key={currentIndex}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.6, ease: 'easeInOut' }}
-                    className="absolute inset-0"
-                  >
-                    <img
-                      src={cards[currentIndex]?.image_url}
-                      alt={cards[currentIndex]?.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => { (e.target as HTMLImageElement).src = blackGraniteImg; }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
-                      <motion.h3
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="text-white text-lg sm:text-2xl font-display font-bold"
-                      >
-                        {cards[currentIndex]?.title}
-                      </motion.h3>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+            <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1200px' }}>
+              {cards.map((card, index) => (
+                <div
+                  key={card.id}
+                  className="absolute w-[70%] sm:w-[65%] h-[85%] rounded-2xl overflow-hidden shadow-2xl cursor-pointer"
+                  style={getCardStyle(index)}
+                  onClick={() => setCurrentIndex(index)}
+                >
+                  <img
+                    src={card.image_url}
+                    alt={card.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => { (e.target as HTMLImageElement).src = blackGraniteImg; }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+                    <h3 className="text-white text-lg sm:text-2xl font-display font-bold">
+                      {card.title}
+                    </h3>
+                  </div>
+                </div>
+              ))}
             </div>
 
             <button
               onClick={prevSlide}
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 dark:bg-black/60 flex items-center justify-center transition-colors"
+              className="absolute left-1 sm:left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 dark:bg-black/60 flex items-center justify-center transition-colors shadow-md"
               aria-label="Previous slide"
               data-testid="button-hero-prev"
             >
@@ -203,14 +217,14 @@ export function HeroSection() {
             </button>
             <button
               onClick={nextSlide}
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 dark:bg-black/60 flex items-center justify-center transition-colors"
+              className="absolute right-1 sm:right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 dark:bg-black/60 flex items-center justify-center transition-colors shadow-md"
               aria-label="Next slide"
               data-testid="button-hero-next"
             >
               <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
 
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5">
+            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
               {cards.map((_, index) => (
                 <button
                   key={index}
