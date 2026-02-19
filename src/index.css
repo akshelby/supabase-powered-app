@@ -50,6 +50,9 @@
   border: none;
   box-shadow: none;
 }
+.dark .cta-ribbon-btn-dark {
+  box-shadow: inset 0 0 0 2px #ffffff;
+}
 .cta-ribbon-btn-dark:hover {
   background: #333333;
   transform: scale(1.04);
