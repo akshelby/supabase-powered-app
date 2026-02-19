@@ -51,15 +51,15 @@
   box-shadow: none;
 }
 .dark .cta-ribbon-btn-dark {
-  background: #ffffff;
-  color: #1a1a1a;
+  background: #ffffff !important;
+  color: #1a1a1a !important;
 }
 .cta-ribbon-btn-dark:hover {
   background: #333333;
   transform: scale(1.04);
 }
 .dark .cta-ribbon-btn-dark:hover {
-  background: #e5e5e5;
+  background: #e5e5e5 !important;
 }
 /* ===== End CTA Ribbon Buttons ===== */
 
