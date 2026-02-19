@@ -120,7 +120,7 @@ export function PremiumCollection() {
       const dt = now - lastTime;
       lastTime = now;
       if (autoRotateRef.current && !isDraggingRef.current && products.length > 0) {
-        rotationRef.current -= 0.6 * (dt / 16);
+        rotationRef.current -= 0.35 * (dt / 16);
         applyRotation();
       }
       animFrameRef.current = requestAnimationFrame(tick);
@@ -214,13 +214,13 @@ export function PremiumCollection() {
   const anglePerCard = 360 / cardCount;
   const isLargeDesktop = !isMobile && typeof window !== 'undefined' && window.innerWidth >= 1280;
   const isTablet = !isMobile && typeof window !== 'undefined' && window.innerWidth >= 640 && window.innerWidth < 1280;
-  const cardW = isMobile ? 120 : isLargeDesktop ? 300 : isTablet ? 250 : 180;
-  const cardH = isMobile ? 170 : isLargeDesktop ? 400 : isTablet ? 340 : 260;
-  const containerH = isMobile ? 260 : isLargeDesktop ? 520 : isTablet ? 460 : 380;
+  const cardW = isMobile ? 160 : isLargeDesktop ? 320 : isTablet ? 270 : 220;
+  const cardH = isMobile ? 220 : isLargeDesktop ? 430 : isTablet ? 370 : 300;
+  const containerH = isMobile ? 320 : isLargeDesktop ? 560 : isTablet ? 500 : 420;
   const halfCard = cardW / 2;
-  const gap = isMobile ? 4 : isLargeDesktop ? 6 : isTablet ? 5 : 5;
+  const gap = isMobile ? 6 : isLargeDesktop ? 8 : isTablet ? 7 : 6;
   const minRadius = Math.ceil((halfCard + gap) / Math.sin(Math.PI / cardCount));
-  const radius = Math.max(minRadius, isMobile ? 100 : isLargeDesktop ? 320 : isTablet ? 260 : 160);
+  const radius = Math.max(minRadius, isMobile ? 160 : isLargeDesktop ? 380 : isTablet ? 300 : 220);
 
   return (
     <section className="py-8 sm:py-12 md:py-16 bg-muted/30 overflow-hidden">
@@ -232,10 +232,10 @@ export function PremiumCollection() {
           transition={{ duration: 0.5 }}
           className="text-center mb-3 sm:mb-5"
         >
-          <h2 className="text-lg sm:text-2xl md:text-3xl font-display font-bold text-red-600">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-red-600">
             Premium Collection
           </h2>
-          <p className="mt-1 sm:mt-1.5 text-[11px] sm:text-xs text-muted-foreground">
+          <p className="mt-1 sm:mt-1.5 text-xs sm:text-sm text-muted-foreground">
             Swipe to rotate
           </p>
         </motion.div>
@@ -298,12 +298,12 @@ export function PremiumCollection() {
                         onError={(e) => { (e.target as HTMLImageElement).src = blackGraniteImg; }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4">
-                        <h3 className="text-white text-xs sm:text-base font-semibold leading-tight">
+                      <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                        <h3 className="text-white text-sm sm:text-lg font-semibold leading-tight">
                           {product.name}
                         </h3>
                         {product.price && (
-                          <p className="text-white/80 text-[10px] sm:text-sm mt-0.5 sm:mt-1">
+                          <p className="text-white/80 text-xs sm:text-base mt-0.5 sm:mt-1">
                             ₹{Number(product.price).toLocaleString('en-IN')}
                           </p>
                         )}
@@ -316,7 +316,7 @@ export function PremiumCollection() {
           </div>
         </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-2">Swipe</p>
+        <p className="text-center text-xs sm:text-sm text-muted-foreground mt-3">Swipe or drag to explore</p>
       </div>
     </section>
   );
