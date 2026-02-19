@@ -27,7 +27,16 @@ const Auth = () => {
     navigate('/');
   };
 
-  if (authLoading) {
+  const [timedOut, setTimedOut] = useState(false);
+
+  useEffect(() => {
+    if (authLoading) {
+      const timer = setTimeout(() => setTimedOut(true), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [authLoading]);
+
+  if (authLoading && !timedOut) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />

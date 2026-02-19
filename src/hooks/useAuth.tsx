@@ -42,7 +42,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const sessionTimeout = setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+
     supabase.auth.getSession().then(async ({ data: { session: s } }) => {
+      clearTimeout(sessionTimeout);
       setSession(s);
       const mapped = mapUser(s?.user ?? null);
       setUser(mapped);
@@ -50,6 +55,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const r = await fetchRole(mapped.id);
         setRole(r);
       }
+      setLoading(false);
+    }).catch(() => {
+      clearTimeout(sessionTimeout);
       setLoading(false);
     });
 
