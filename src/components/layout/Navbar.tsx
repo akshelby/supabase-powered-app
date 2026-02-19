@@ -85,11 +85,12 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4">
         <nav className="flex items-center justify-between h-16 lg:h-20">
-          <Link to="/" className="flex items-center gap-2">
-            <img src="/logo-sp.svg" alt="SP Granites" className="w-10 h-10 object-contain" />
-            <div className="hidden sm:block leading-tight">
-              <span className="brand-name text-xl">SP Granites</span>
-              <p className="brand-tagline text-[8px] text-muted-foreground -mt-0.5">Premium Stone Works</p>
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <img src="/logo-sp.svg" alt="SP Granites" className="w-10 h-10 object-contain transition-transform group-hover:scale-105" />
+            <div className="hidden sm:flex flex-col whitespace-nowrap">
+              <span className="brand-name text-xl lg:text-[22px] leading-none">SP Granites</span>
+              <span className="brand-tagline text-[7px] text-muted-foreground/60 mt-1">Premium Stone Works</span>
+              <span className="brand-divider" />
             </div>
           </Link>
 

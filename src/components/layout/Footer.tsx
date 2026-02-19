@@ -35,13 +35,14 @@ export function Footer() {
       <div className="container mx-auto px-4 py-8 sm:py-12 lg:py-16">
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
           <div className="space-y-3 sm:space-y-4 col-span-2 sm:col-span-1">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-premium rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm sm:text-lg">SP</span>
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 sm:w-11 sm:h-11 bg-gradient-premium rounded-lg flex items-center justify-center shadow-lg shadow-red-900/30">
+                <span className="text-white font-bold text-sm sm:text-lg" style={{fontFamily: "'Playfair Display', Georgia, serif"}}>SP</span>
               </div>
-              <div>
-                <h3 className="brand-name-white text-base sm:text-xl">SP Granites</h3>
-                <p className="brand-tagline text-[10px] sm:text-xs text-gray-400">Premium Stone Works</p>
+              <div className="flex flex-col">
+                <h3 className="brand-name-white text-lg sm:text-xl leading-none">SP Granites</h3>
+                <span className="brand-tagline text-[8px] sm:text-[9px] text-gray-400/70 mt-1">Premium Stone Works</span>
+                <span className="brand-divider-white" />
               </div>
             </div>
             <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">

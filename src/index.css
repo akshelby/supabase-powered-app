@@ -8,42 +8,72 @@
 .brand-name {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 900;
-  letter-spacing: 0.02em;
-  background: linear-gradient(135deg, #b91c1c 0%, #dc2626 40%, #f87171 60%, #dc2626 80%, #991b1b 100%);
+  letter-spacing: 0.03em;
+  background: linear-gradient(160deg, #7f1d1d 0%, #dc2626 35%, #ef4444 50%, #dc2626 65%, #7f1d1d 100%);
+  background-size: 200% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   position: relative;
   display: inline-block;
+  filter: drop-shadow(0 1px 2px rgba(153, 27, 27, 0.15));
+  animation: brandShimmer 6s ease-in-out infinite;
 }
 
-.brand-name-light {
+@keyframes brandShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.brand-name-hero {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 900;
-  letter-spacing: 0.02em;
-  background: linear-gradient(135deg, #ffffff 0%, #fecaca 40%, #ffffff 60%, #fecaca 80%, #ffffff 100%);
+  letter-spacing: 0.04em;
+  background: linear-gradient(160deg, #7f1d1d 0%, #b91c1c 25%, #ef4444 50%, #b91c1c 75%, #7f1d1d 100%);
+  background-size: 200% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   display: inline-block;
+  filter: drop-shadow(0 2px 4px rgba(153, 27, 27, 0.2));
+  animation: brandShimmer 6s ease-in-out infinite;
 }
 
 .brand-name-white {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 900;
-  letter-spacing: 0.02em;
-  color: white;
+  letter-spacing: 0.03em;
+  background: linear-gradient(160deg, #ffffff 0%, #fca5a5 40%, #ffffff 60%, #fca5a5 80%, #ffffff 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   display: inline-block;
+  animation: brandShimmer 6s ease-in-out infinite;
 }
 
 .brand-tagline {
   font-family: 'Playfair Display', Georgia, serif;
   font-style: italic;
   font-weight: 400;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-size: 0.6em;
-  opacity: 0.7;
+}
+
+.brand-divider {
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #dc2626, transparent);
+  margin-top: 4px;
+}
+
+.brand-divider-white {
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.6), transparent);
+  margin-top: 4px;
 }
 
 /* ===== CTA Ribbon Buttons ===== */
