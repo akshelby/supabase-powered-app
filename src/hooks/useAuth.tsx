@@ -28,6 +28,27 @@ function mapUser(user: User | null): AuthUser | null {
 
 const ADMIN_EMAILS = ['spgranites9999@gmail.com'];
 
+async function ensureProfile(userId: string, email: string): Promise<void> {
+  try {
+    const { data } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (!data) {
+      await (supabase.from('profiles') as any).insert({
+        user_id: userId,
+        email: email,
+        display_name: email.split('@')[0],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+    }
+  } catch (err) {
+    console.error('Error ensuring profile:', err);
+  }
+}
+
 async function ensureAdminRole(userId: string, email: string): Promise<void> {
   if (!ADMIN_EMAILS.includes(email.toLowerCase())) return;
   const { data } = await supabase
@@ -43,7 +64,10 @@ async function ensureAdminRole(userId: string, email: string): Promise<void> {
 }
 
 async function fetchRole(userId: string, email?: string): Promise<AppRole> {
-  if (email) await ensureAdminRole(userId, email);
+  if (email) {
+    await ensureProfile(userId, email);
+    await ensureAdminRole(userId, email);
+  }
   const { data } = await supabase
     .from('user_roles')
     .select('role')
