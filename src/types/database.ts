@@ -245,3 +245,43 @@ export interface SiteVisitor {
   city: string | null;
   visited_at: string;
 }
+
+export interface Lead {
+  id: string;
+  full_name: string;
+  email: string | null;
+  phone: string | null;
+  source: string | null;
+  status: 'new' | 'contacted' | 'interested' | 'quoted' | 'converted' | 'lost';
+  assigned_to: string | null;
+  related_profile_id: string | null;
+  last_contacted_at: string | null;
+  next_followup_at: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CrmNote {
+  id: string;
+  lead_id: string | null;
+  user_id: string | null;
+  author_id: string;
+  note: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CrmFollowup {
+  id: string;
+  lead_id: string | null;
+  user_id: string | null;
+  due_at: string;
+  completed_at: string | null;
+  status: 'pending' | 'done' | 'skipped';
+  channel: string | null;
+  summary: string | null;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
