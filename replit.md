@@ -97,6 +97,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- **2026-02-19**: Migrated product images from external URLs to local storage
+  - All product images now served from `public/images/products/` instead of Unsplash URLs
+  - Database `products.images` column updated with local paths (e.g., `/images/products/black-granite.jpg`)
+  - Local imports in PremiumCollection and FeaturedProducts components remain as primary fallback
+  - Brown granite and Blue Pearl use `.png` format; others use `.jpg`
 - **2026-02-19**: Added CRM (Customer Relationship Management) system
   - Three new database tables: `leads`, `crm_notes`, `crm_followups`
   - CRM Overview page (`/admin/crm`) with pipeline stats, recent leads, and upcoming follow-ups
