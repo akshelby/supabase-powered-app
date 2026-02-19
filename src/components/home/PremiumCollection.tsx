@@ -52,7 +52,7 @@ function getProductImage(product: CollectionProduct): string {
 }
 
 export function PremiumCollection() {
-  const [products, setProducts] = useState<CollectionProduct[]>([]);
+  const [products, setProducts] = useState<CollectionProduct[]>(fallbackProducts);
   const [rotation, setRotation] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -283,6 +283,7 @@ export function PremiumCollection() {
                         alt={product.name}
                         className="w-full h-full object-cover"
                         draggable={false}
+                        onError={(e) => { (e.target as HTMLImageElement).src = blackGraniteImg; }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                       <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4">

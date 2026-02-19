@@ -26,8 +26,16 @@ const fallbackImages: Record<string, string> = {
   'Stone Staircases': staircasesImg,
 };
 
+const defaultCards: CarouselCard[] = [
+  { id: '1', title: 'Black Galaxy Granite', image_url: blackGraniteImg },
+  { id: '2', title: 'Kitchen Countertops', image_url: kitchenCountertopsImg },
+  { id: '3', title: 'Luxury Flooring', image_url: flooringImg },
+  { id: '4', title: 'Modern Bathrooms', image_url: bathroomImg },
+  { id: '5', title: 'Stone Staircases', image_url: staircasesImg },
+];
+
 export function HeroSection() {
-  const [cards, setCards] = useState<CarouselCard[]>([]);
+  const [cards, setCards] = useState<CarouselCard[]>(defaultCards);
   const [currentIndex, setCurrentIndex] = useState(0);
   const { t } = useTranslation();
 
@@ -55,19 +63,8 @@ export function HeroSection() {
             : card.image_url
         }));
         setCards(mappedCards);
-      } else {
-        setCards([
-          { id: '1', title: 'Premium Granite', image_url: blackGraniteImg },
-          { id: '2', title: 'Elegant Marble', image_url: kitchenCountertopsImg },
-          { id: '3', title: 'Modern Countertops', image_url: flooringImg },
-        ]);
       }
     } catch {
-      setCards([
-        { id: '1', title: 'Premium Granite', image_url: blackGraniteImg },
-        { id: '2', title: 'Elegant Marble', image_url: kitchenCountertopsImg },
-        { id: '3', title: 'Modern Countertops', image_url: flooringImg },
-      ]);
     }
   };
 
@@ -174,6 +171,7 @@ export function HeroSection() {
                       src={cards[currentIndex]?.image_url}
                       alt={cards[currentIndex]?.title}
                       className="w-full h-full object-cover"
+                      onError={(e) => { (e.target as HTMLImageElement).src = blackGraniteImg; }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">

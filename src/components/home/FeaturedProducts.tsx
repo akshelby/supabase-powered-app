@@ -39,7 +39,7 @@ const fallbackProducts: Product[] = [
 ];
 
 export function FeaturedProducts() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(fallbackProducts);
   const { addToCart } = useCart();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { user } = useAuth();
@@ -148,6 +148,7 @@ export function FeaturedProducts() {
                   alt={product.name}
                   loading="lazy"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => { (e.target as HTMLImageElement).src = blackGraniteImg; }}
                 />
                 {product.compare_price && product.compare_price > product.price && (
                   <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-destructive text-destructive-foreground text-[10px] sm:text-xs font-semibold rounded" data-testid={`badge-discount-${product.id}`}>
