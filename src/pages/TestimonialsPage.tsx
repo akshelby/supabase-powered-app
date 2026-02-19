@@ -1,20 +1,39 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Star, Quote } from 'lucide-react';
+import { Star, Quote, Pencil, Trash2 } from 'lucide-react';
 import { MainLayout } from '@/components/layout';
+import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { Testimonial, CustomerReview } from '@/types/database';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/hooks/useAuth';
+import { ReviewForm } from '@/components/reviews/ReviewForm';
+import { toast } from 'sonner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export default function TestimonialsPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [customerReviews, setCustomerReviews] = useState<CustomerReview[]>([]);
+  const [myReviews, setMyReviews] = useState<CustomerReview[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingReview, setEditingReview] = useState<CustomerReview | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [showPhotoModal, setShowPhotoModal] = useState<{ photos: string[]; index: number } | null>(null);
   const { t } = useTranslation();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [user]);
 
   const fetchData = async () => {
     try {
@@ -24,9 +43,43 @@ export default function TestimonialsPage() {
       ]);
       if (testimonialRes.data) setTestimonials(testimonialRes.data as Testimonial[]);
       if (reviewRes.data) setCustomerReviews(reviewRes.data as CustomerReview[]);
+
+      if (user) {
+        const { data } = await supabase.from('customer_reviews').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
+        if (data) setMyReviews(data as CustomerReview[]);
+      } else {
+        setMyReviews([]);
+      }
     } catch {}
     setLoading(false);
   };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    try {
+      const { error } = await supabase
+        .from('customer_reviews')
+        .delete()
+        .eq('id', deleteId)
+        .eq('user_id', user!.id) as any;
+      if (error) throw error;
+      toast.success('Review deleted');
+      fetchData();
+    } catch {
+      toast.error('Failed to delete review');
+    }
+    setDeleteId(null);
+  };
+
+  const isMyReview = (reviewId: string) => {
+    return myReviews.some(r => r.id === reviewId);
+  };
+
+  const getMyReview = (reviewId: string) => {
+    return myReviews.find(r => r.id === reviewId) || null;
+  };
+
+  const pendingReviews = myReviews.filter(r => !r.is_approved);
 
   return (
     <MainLayout>
@@ -57,6 +110,48 @@ export default function TestimonialsPage() {
             {t('testimonials.subtitle')}
           </motion.p>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mb-6 sm:mb-8"
+        >
+          {editingReview ? (
+            <ReviewForm
+              editReview={editingReview}
+              onSuccess={() => { setEditingReview(null); fetchData(); }}
+              onCancel={() => setEditingReview(null)}
+            />
+          ) : (
+            <ReviewForm onSuccess={() => fetchData()} />
+          )}
+        </motion.div>
+
+        {user && pendingReviews.length > 0 && (
+          <section className="mb-6 sm:mb-8">
+            <h2 className="text-sm sm:text-lg font-display font-bold mb-3 sm:mb-4 flex items-center gap-2">
+              Your Pending Reviews
+              <span className="text-[10px] sm:text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                Awaiting approval
+              </span>
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+              {pendingReviews.map((review, index) => (
+                <ReviewCard
+                  key={review.id}
+                  review={review}
+                  index={index}
+                  isOwner={true}
+                  onEdit={() => setEditingReview(review)}
+                  onDelete={() => setDeleteId(review.id)}
+                  onPhotoClick={(photos, idx) => setShowPhotoModal({ photos, index: idx })}
+                  isPending
+                />
+              ))}
+            </div>
+          </section>
+        )}
 
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
@@ -132,65 +227,15 @@ export default function TestimonialsPage() {
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                   {customerReviews.map((review, index) => (
-                    <motion.div
+                    <ReviewCard
                       key={review.id}
-                      initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.03 }}
-                      className="bg-card p-3 sm:p-4 rounded-lg border border-border"
-                      data-testid={`card-review-${review.id}`}
-                    >
-                      <div className="flex items-start gap-2.5">
-                        {review.profile_photo_url ? (
-                          <img
-                            src={review.profile_photo_url}
-                            alt={review.customer_name}
-                            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover shrink-0"
-                          />
-                        ) : (
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs shrink-0">
-                            {review.customer_name.charAt(0)}
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-1 mb-0.5">
-                            <h4 className="text-xs sm:text-sm font-semibold truncate">{review.customer_name}</h4>
-                            <div className="flex gap-0.5 shrink-0">
-                              {Array.from({ length: 5 }).map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`h-2.5 w-2.5 sm:h-3 sm:w-3 ${
-                                    i < review.rating
-                                      ? 'text-primary fill-primary'
-                                      : 'text-muted'
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                          {(review.city || review.area_name) && (
-                            <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">
-                              {[review.area_name, review.city].filter(Boolean).join(', ')}
-                            </p>
-                          )}
-                          <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
-                            {review.review_text}
-                          </p>
-                          {review.photos && review.photos.length > 0 && (
-                            <div className="flex gap-1.5 mt-2 overflow-x-auto">
-                              {review.photos.map((photo, i) => (
-                                <img
-                                  key={i}
-                                  src={photo}
-                                  alt={`Review photo ${i + 1}`}
-                                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-md object-cover shrink-0"
-                                />
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </motion.div>
+                      review={review}
+                      index={index}
+                      isOwner={isMyReview(review.id)}
+                      onEdit={() => { const r = getMyReview(review.id); if (r) setEditingReview(r); }}
+                      onDelete={() => setDeleteId(review.id)}
+                      onPhotoClick={(photos, idx) => setShowPhotoModal({ photos, index: idx })}
+                    />
                   ))}
                 </div>
               </section>
@@ -204,6 +249,149 @@ export default function TestimonialsPage() {
           </>
         )}
       </div>
+
+      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Review</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this review? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {showPhotoModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={() => setShowPhotoModal(null)}
+        >
+          <img
+            src={showPhotoModal.photos[showPhotoModal.index]}
+            alt="Review photo"
+            className="max-w-full max-h-[85vh] object-contain rounded-lg"
+            onClick={e => e.stopPropagation()}
+          />
+        </div>
+      )}
     </MainLayout>
+  );
+}
+
+interface ReviewCardProps {
+  review: CustomerReview;
+  index: number;
+  isOwner: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
+  onPhotoClick: (photos: string[], index: number) => void;
+  isPending?: boolean;
+}
+
+function ReviewCard({ review, index, isOwner, onEdit, onDelete, onPhotoClick, isPending }: ReviewCardProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.03 }}
+      className={`bg-card p-3 sm:p-4 rounded-lg border ${isPending ? 'border-yellow-500/40 bg-yellow-50/30 dark:bg-yellow-950/10' : 'border-border'} relative`}
+      data-testid={`card-review-${review.id}`}
+    >
+      {isOwner && (
+        <div className="absolute top-2 right-2 flex gap-1">
+          <button
+            onClick={onEdit}
+            className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-primary transition-colors"
+            title="Edit review"
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={onDelete}
+            className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-destructive transition-colors"
+            title="Delete review"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
+      <div className="flex items-start gap-2.5">
+        {review.profile_photo_url ? (
+          <img
+            src={review.profile_photo_url}
+            alt={review.customer_name}
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover shrink-0"
+          />
+        ) : (
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs shrink-0">
+            {review.customer_name.charAt(0)}
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-1 mb-0.5 pr-16">
+            <h4 className="text-xs sm:text-sm font-semibold truncate">{review.customer_name}</h4>
+            <div className="flex gap-0.5 shrink-0">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  className={`h-2.5 w-2.5 sm:h-3 sm:w-3 ${
+                    i < review.rating
+                      ? 'text-yellow-500 fill-yellow-500'
+                      : 'text-muted'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+          {(review.city || review.area_name) && (
+            <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">
+              {[review.area_name, review.city].filter(Boolean).join(', ')}
+            </p>
+          )}
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            {review.review_text}
+          </p>
+
+          {review.photos && review.photos.length > 0 && (
+            <div className="flex gap-1.5 mt-2 overflow-x-auto pb-1">
+              {review.photos.map((photo, i) => (
+                <img
+                  key={i}
+                  src={photo}
+                  alt={`Review photo ${i + 1}`}
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-md object-cover shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                  loading="lazy"
+                  onClick={() => onPhotoClick(review.photos, i)}
+                />
+              ))}
+            </div>
+          )}
+
+          {review.video_url && (
+            <div className="mt-2">
+              <video
+                src={review.video_url}
+                controls
+                className="w-full max-w-xs rounded-lg border border-border"
+                preload="metadata"
+              />
+            </div>
+          )}
+
+          {isPending && (
+            <p className="text-[10px] sm:text-xs text-yellow-600 dark:text-yellow-400 mt-2 font-medium">
+              Pending approval
+            </p>
+          )}
+        </div>
+      </div>
+    </motion.div>
   );
 }
