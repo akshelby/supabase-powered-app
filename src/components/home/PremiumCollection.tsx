@@ -42,6 +42,8 @@ const fallbackProducts: CollectionProduct[] = [
   { id: 'fb-8', name: 'Steel Grey Granite', slug: 'steel-grey-granite', price: 2900, images: [greyGraniteImg], is_active: true },
   { id: 'fb-9', name: 'Red Granite', slug: 'red-granite', price: 3600, images: [redGraniteImg], is_active: true },
   { id: 'fb-10', name: 'Brown Pearl Granite', slug: 'brown-pearl-granite', price: 3100, images: [brownGraniteImg], is_active: true },
+  { id: 'fb-11', name: 'Blue Galaxy Granite', slug: 'blue-galaxy-granite', price: 4800, images: [bluePearlImg], is_active: true },
+  { id: 'fb-12', name: 'Forest Green Granite', slug: 'forest-green-granite', price: 3400, images: [greenGraniteImg], is_active: true },
 ];
 
 function getProductImage(product: CollectionProduct): string {
@@ -79,12 +81,12 @@ export function PremiumCollection() {
         const allProducts = data || [];
         const featured = allProducts.filter((p: any) => p.is_featured && p.is_active);
         if (featured.length > 0) {
-          setProducts(featured.slice(0, 10));
+          setProducts(featured.slice(0, 12));
           return;
         }
         const active = allProducts.filter((p: any) => p.is_active);
         if (active.length > 0) {
-          setProducts(active.slice(0, 10));
+          setProducts(active.slice(0, 12));
         } else {
           setProducts(fallbackProducts);
         }
@@ -270,7 +272,7 @@ export function PremiumCollection() {
               return (
                 <div
                   key={product.id}
-                  className="absolute backface-hidden"
+                  className="absolute"
                   style={{
                     width: `${cardW}px`,
                     height: `${cardH}px`,
@@ -278,7 +280,6 @@ export function PremiumCollection() {
                     top: `${-cardH / 2}px`,
                     transformStyle: 'preserve-3d',
                     transform: `rotateY(${angle}deg) translateZ(${radius}px)`,
-                    backfaceVisibility: 'hidden',
                   }}
                 >
                   <Link
