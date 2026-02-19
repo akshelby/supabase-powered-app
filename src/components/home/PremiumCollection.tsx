@@ -14,9 +14,9 @@ interface CollectionProduct {
 }
 
 import blackGraniteImg from '@/assets/products/black-granite.jpg';
-import brownGraniteImg from '@/assets/products/brown-granite.jpg';
+import brownGraniteImg from '@/assets/products/brown-granite.png';
 import greenGraniteImg from '@/assets/products/green-granite.jpg';
-import bluePearlImg from '@/assets/products/blue-pearl.jpg';
+import bluePearlImg from '@/assets/products/blue-pearl.png';
 import redGraniteImg from '@/assets/products/red-granite.jpg';
 import greyGraniteImg from '@/assets/products/grey-granite.jpg';
 
