@@ -87,11 +87,6 @@ export function Navbar() {
         <nav className="flex items-center justify-between h-16 lg:h-20">
           <Link to="/" className="flex items-center gap-2.5 group">
             <img src="/logo-sp.svg" alt="SP Granites" className="w-10 h-10 object-contain transition-transform group-hover:scale-105" />
-            <div className="hidden sm:flex flex-col whitespace-nowrap">
-              <span className="brand-name text-xl lg:text-[22px] leading-none">SP Granites</span>
-              <span className="brand-tagline text-[7px] text-muted-foreground/60 mt-1">Premium Stone Works</span>
-              <span className="brand-divider" />
-            </div>
           </Link>
 
           <div className="hidden lg:flex items-center gap-1.5 overflow-x-auto max-w-[calc(100%-360px)] scrollbar-hide border-2 border-gray-300 rounded-xl px-3 py-1.5 bg-gray-50/50 mr-2">
