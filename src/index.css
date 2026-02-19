@@ -36,6 +36,15 @@
 .cta-ribbon-btn-outline:hover {
   background: rgba(255, 255, 255, 0.25);
 }
+.cta-ribbon-btn-dark {
+  background: transparent;
+  color: #1a1a1a;
+  border: 2px solid #d1d5db;
+}
+.cta-ribbon-btn-dark:hover {
+  background: #f3f4f6;
+  transform: scale(1.04);
+}
 /* ===== End CTA Ribbon Buttons ===== */
 
 @layer base {
