@@ -94,7 +94,7 @@ export default function TestimonialsPage() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-xl sm:text-2xl lg:text-4xl font-display font-bold mt-1 mb-1 sm:mb-2"
+            className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold mt-1 mb-1 sm:mb-2"
             data-testid="text-testimonials-title"
           >
             {t('testimonials.pageTitle')}
@@ -136,7 +136,7 @@ export default function TestimonialsPage() {
           <>
             {testimonials.length > 0 && (
               <section className="mb-6 sm:mb-10">
-                <h2 className="text-lg sm:text-xl font-display font-bold mb-3 sm:mb-4">
+                <h2 className="text-xl sm:text-2xl font-display font-bold mb-3 sm:mb-4">
                   {t('testimonials.featuredTestimonials')}
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
@@ -146,15 +146,15 @@ export default function TestimonialsPage() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="bg-card p-3 sm:p-4 rounded-lg border border-border relative"
+                      className="bg-card p-4 sm:p-5 rounded-lg border border-border relative"
                       data-testid={`card-testimonial-${testimonial.id}`}
                     >
-                      <Quote className="absolute top-2.5 right-2.5 h-5 w-5 sm:h-6 sm:w-6 text-primary/20" />
+                      <Quote className="absolute top-3 right-3 h-6 w-6 sm:h-7 sm:w-7 text-primary/20" />
                       <div className="flex gap-0.5 mb-2">
                         {Array.from({ length: 5 }).map((_, i) => (
                           <Star
                             key={i}
-                            className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${
+                            className={`h-4 w-4 sm:h-5 sm:w-5 ${
                               i < testimonial.rating
                                 ? 'text-primary fill-primary'
                                 : 'text-muted'
@@ -162,25 +162,25 @@ export default function TestimonialsPage() {
                           />
                         ))}
                       </div>
-                      <p className="text-sm sm:text-base text-muted-foreground mb-3 line-clamp-3">
+                      <p className="text-base sm:text-lg text-muted-foreground mb-3 line-clamp-3 leading-relaxed">
                         "{testimonial.review_text}"
                       </p>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3">
                         {testimonial.image_url ? (
                           <img
                             src={testimonial.image_url}
                             alt={testimonial.customer_name}
-                            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover"
+                            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover"
                           />
                         ) : (
-                          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
+                          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-base">
                             {testimonial.customer_name.charAt(0)}
                           </div>
                         )}
                         <div>
-                          <h4 className="text-sm sm:text-base font-semibold">{testimonial.customer_name}</h4>
+                          <h4 className="text-base sm:text-lg font-semibold">{testimonial.customer_name}</h4>
                           {testimonial.company && (
-                            <p className="text-xs sm:text-sm text-muted-foreground">
+                            <p className="text-sm sm:text-base text-muted-foreground">
                               {testimonial.designation && `${testimonial.designation}, `}
                               {testimonial.company}
                             </p>
@@ -195,7 +195,7 @@ export default function TestimonialsPage() {
 
             {customerReviews.length > 0 && (
               <section>
-                <h2 className="text-lg sm:text-xl font-display font-bold mb-3 sm:mb-4">
+                <h2 className="text-xl sm:text-2xl font-display font-bold mb-3 sm:mb-4">
                   {t('testimonials.customerReviews')}
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
@@ -216,7 +216,7 @@ export default function TestimonialsPage() {
 
             {testimonials.length === 0 && customerReviews.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-sm text-muted-foreground">{t('testimonials.noReviews')}</p>
+                <p className="text-base text-muted-foreground">{t('testimonials.noReviews')}</p>
               </div>
             )}
           </>
@@ -272,7 +272,7 @@ function ReviewCard({ review, index, isOwner, onEdit, onDelete, onPhotoClick }: 
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.03 }}
-      className="bg-card p-3 sm:p-4 rounded-lg border border-border relative"
+      className="bg-card p-4 sm:p-5 rounded-lg border border-border relative"
       data-testid={`card-review-${review.id}`}
     >
       {isOwner && (
@@ -282,38 +282,38 @@ function ReviewCard({ review, index, isOwner, onEdit, onDelete, onPhotoClick }: 
             className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-primary transition-colors"
             title="Edit review"
           >
-            <Pencil className="h-3.5 w-3.5" />
+            <Pencil className="h-4 w-4" />
           </button>
           <button
             onClick={onDelete}
             className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-destructive transition-colors"
             title="Delete review"
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <Trash2 className="h-4 w-4" />
           </button>
         </div>
       )}
 
-      <div className="flex items-start gap-2.5">
+      <div className="flex items-start gap-3">
         {review.profile_photo_url ? (
           <img
             src={review.profile_photo_url}
             alt={review.customer_name}
-            className="w-9 h-9 sm:w-11 sm:h-11 rounded-full object-cover shrink-0"
+            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shrink-0"
           />
         ) : (
-          <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm shrink-0">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-base shrink-0">
             {review.customer_name.charAt(0)}
           </div>
         )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-1 mb-0.5 pr-16">
-            <h4 className="text-sm sm:text-base font-semibold truncate">{review.customer_name}</h4>
+            <h4 className="text-base sm:text-lg font-semibold truncate">{review.customer_name}</h4>
             <div className="flex gap-0.5 shrink-0">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
                   key={i}
-                  className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${
+                  className={`h-4 w-4 sm:h-5 sm:w-5 ${
                     i < review.rating
                       ? 'text-yellow-500 fill-yellow-500'
                       : 'text-muted'
@@ -323,11 +323,11 @@ function ReviewCard({ review, index, isOwner, onEdit, onDelete, onPhotoClick }: 
             </div>
           </div>
           {(review.city || review.area_name) && (
-            <p className="text-xs sm:text-sm text-muted-foreground mb-1">
+            <p className="text-sm sm:text-base text-muted-foreground mb-1">
               {[review.area_name, review.city].filter(Boolean).join(', ')}
             </p>
           )}
-          <p className="text-sm sm:text-base text-muted-foreground">
+          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
             {review.review_text}
           </p>
 
