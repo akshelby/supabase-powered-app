@@ -40,6 +40,12 @@ const fallbackProducts: CollectionProduct[] = [
   { id: 'fb-6', name: 'Imperial Red Granite', slug: 'imperial-red-granite', price: 4000, images: [redGraniteImg], is_active: true },
   { id: 'fb-7', name: 'Kashmir White Granite', slug: 'kashmir-white-granite', price: 3200, images: [greyGraniteImg], is_active: true },
   { id: 'fb-8', name: 'Steel Grey Granite', slug: 'steel-grey-granite', price: 2900, images: [greyGraniteImg], is_active: true },
+  { id: 'fb-9', name: 'Red Granite', slug: 'red-granite', price: 3600, images: [redGraniteImg], is_active: true },
+  { id: 'fb-10', name: 'Brown Pearl Granite', slug: 'brown-pearl-granite', price: 3100, images: [brownGraniteImg], is_active: true },
+  { id: 'fb-11', name: 'Blue Galaxy Granite', slug: 'blue-galaxy-granite', price: 4800, images: [bluePearlImg], is_active: true },
+  { id: 'fb-12', name: 'Forest Green Granite', slug: 'forest-green-granite', price: 3400, images: [greenGraniteImg], is_active: true },
+  { id: 'fb-13', name: 'Midnight Black Granite', slug: 'midnight-black-granite', price: 4200, images: [blackGraniteImg], is_active: true },
+  { id: 'fb-14', name: 'Classic Brown Granite', slug: 'classic-brown-granite', price: 2700, images: [brownGraniteImg], is_active: true },
 ];
 
 function getProductImage(product: CollectionProduct): string {
@@ -79,12 +85,12 @@ export function PremiumCollection() {
         const allProducts = data || [];
         const featured = allProducts.filter((p: any) => p.is_featured && p.is_active);
         if (featured.length > 0) {
-          setProducts(featured.slice(0, 8));
+          setProducts(featured.slice(0, 14));
           return;
         }
         const active = allProducts.filter((p: any) => p.is_active);
         if (active.length > 0) {
-          setProducts(active.slice(0, 8));
+          setProducts(active.slice(0, 14));
         } else {
           setProducts(fallbackProducts);
         }
@@ -116,11 +122,11 @@ export function PremiumCollection() {
   const anglePerCard = cardCount > 0 ? 360 / cardCount : 36;
 
   const getRadius = useCallback(() => {
-    const cardW = isMobile ? 140 : isLargeDesktop ? 280 : isTablet ? 230 : 200;
+    const cardW = isMobile ? 110 : isLargeDesktop ? 220 : isTablet ? 180 : 160;
     const halfCard = cardW / 2;
-    const gap = isMobile ? 10 : isLargeDesktop ? 14 : isTablet ? 12 : 10;
+    const gap = isMobile ? 8 : isLargeDesktop ? 12 : isTablet ? 10 : 8;
     const minR = Math.ceil((halfCard + gap) / Math.sin(Math.PI / Math.max(cardCount, 1)));
-    return Math.max(minR, isMobile ? 200 : isLargeDesktop ? 450 : isTablet ? 360 : 280);
+    return Math.max(minR, isMobile ? 250 : isLargeDesktop ? 520 : isTablet ? 420 : 340);
   }, [isMobile, isTablet, isLargeDesktop, cardCount]);
 
   const applyRotation = useCallback(() => {
@@ -244,9 +250,9 @@ export function PremiumCollection() {
 
   if (cardCount === 0) return null;
 
-  const cardW = isMobile ? 140 : isLargeDesktop ? 280 : isTablet ? 230 : 200;
-  const cardH = isMobile ? 200 : isLargeDesktop ? 380 : isTablet ? 320 : 270;
-  const containerH = isMobile ? 300 : isLargeDesktop ? 520 : isTablet ? 440 : 380;
+  const cardW = isMobile ? 110 : isLargeDesktop ? 220 : isTablet ? 180 : 160;
+  const cardH = isMobile ? 155 : isLargeDesktop ? 300 : isTablet ? 250 : 220;
+  const containerH = isMobile ? 320 : isLargeDesktop ? 540 : isTablet ? 460 : 400;
 
   return (
     <section className="py-8 sm:py-12 md:py-16 bg-muted/30 overflow-hidden">
