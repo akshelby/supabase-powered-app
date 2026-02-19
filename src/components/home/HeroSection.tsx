@@ -78,24 +78,25 @@ export function HeroSection() {
     if (offset < -total / 2) offset += total;
 
     const absOffset = Math.abs(offset);
-    const angle = offset * 45;
-    const translateX = offset * 35;
-    const translateZ = -absOffset * 120;
-    const opacity = absOffset > 2 ? 0 : 1 - absOffset * 0.3;
-    const scale = 1 - absOffset * 0.12;
-    const zIndex = total - absOffset;
+    const angle = offset * 40;
+    const translateX = offset * 55;
+    const translateZ = -absOffset * 80;
+    const opacity = absOffset > 2 ? 0 : absOffset === 0 ? 1 : 0.7;
+    const scale = absOffset === 0 ? 1 : 0.8;
+    const zIndex = 10 - absOffset;
 
     return {
-      transform: `perspective(1000px) translateX(${translateX}%) rotateY(${angle}deg) translateZ(${translateZ}px) scale(${scale})`,
+      transform: `translateX(${translateX}%) perspective(1000px) rotateY(${angle}deg) translateZ(${translateZ}px) scale(${scale})`,
       opacity: Math.max(0, opacity),
       zIndex,
       transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
       pointerEvents: (absOffset === 0 ? 'auto' : 'none') as React.CSSProperties['pointerEvents'],
+      filter: absOffset === 0 ? 'none' : 'brightness(0.6)',
     };
   };
 
   return (
-    <section className="relative min-h-[55vh] sm:min-h-[70vh] lg:min-h-[80vh] flex items-center overflow-hidden bg-background" data-testid="hero-section">
+    <section className="relative min-h-[55vh] sm:min-h-[70vh] lg:min-h-[80vh] flex items-center bg-background" data-testid="hero-section">
       <div className="container mx-auto px-4 py-8 sm:py-14 lg:py-12 relative z-10">
         <div className="grid lg:grid-cols-2 gap-6 sm:gap-10 lg:gap-16 items-center">
           <motion.div
@@ -180,10 +181,10 @@ export function HeroSection() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="relative h-[300px] sm:h-[400px] lg:h-[500px]"
+            className="relative h-[300px] sm:h-[400px] lg:h-[500px] overflow-visible"
             data-testid="hero-carousel"
           >
-            <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1200px' }}>
+            <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
               {cards.map((card, index) => (
                 <div
                   key={card.id}
