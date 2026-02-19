@@ -161,14 +161,14 @@ export function HeroSection() {
             data-testid="hero-carousel"
           >
             <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-lg">
-              <AnimatePresence mode="wait">
+              <AnimatePresence initial={false}>
                 {cards.length > 0 && (
                   <motion.div
                     key={currentIndex}
-                    initial={{ opacity: 0, scale: 1.05 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.6, ease: 'easeInOut' }}
                     className="absolute inset-0"
                   >
                     <img
