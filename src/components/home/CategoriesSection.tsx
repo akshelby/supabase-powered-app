@@ -29,6 +29,7 @@ interface Category {
   bgColor: string;
   borderColor: string;
   glowColor?: string;
+  arcColor?: string;
   prominent?: boolean;
   prominentBg?: string;
 }
@@ -146,6 +147,7 @@ const categories: Category[] = [
     bgColor: 'bg-gradient-to-br from-[#25D366] to-[#128C7E]',
     borderColor: 'border-transparent',
     glowColor: 'bg-[#25D366]',
+    arcColor: '#25D366',
     prominent: true,
     prominentBg: 'bg-gradient-to-br from-[#25D366] to-[#128C7E]',
   },
@@ -217,6 +219,7 @@ export function CategoriesSection() {
               bgColor={category.bgColor}
               borderColor={category.borderColor}
               glowColor={category.glowColor}
+              arcColor={category.arcColor}
               prominent={category.prominent}
               prominentBg={category.prominentBg}
               index={index}
