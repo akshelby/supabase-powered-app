@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AdminLayout, StatsCard, PageHeader } from '@/components/admin';
+import { useCategoryStyle } from '@/hooks/useCategoryStyle';
+import { LayoutGrid, Rows3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import {
@@ -125,12 +127,55 @@ export default function AdminDashboard() {
     return colors[status] || 'bg-muted text-muted-foreground';
   };
 
+  const { style: categoryStyle, updateStyle: updateCategoryStyle } = useCategoryStyle();
+
   return (
     <AdminLayout>
       <PageHeader
         title="Dashboard"
         description="Overview of your store performance"
       />
+
+      {/* Category Icon Style Toggle */}
+      <div className="mb-6">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <LayoutGrid className="w-4 h-4" />
+              Homepage Category Icon Style
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => updateCategoryStyle('circle')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
+                  categoryStyle === 'circle'
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border text-muted-foreground hover:border-primary/40'
+                }`}
+              >
+                <LayoutGrid className="w-4 h-4" />
+                Circle Buttons
+              </button>
+              <button
+                onClick={() => updateCategoryStyle('pill')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
+                  categoryStyle === 'pill'
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border text-muted-foreground hover:border-primary/40'
+                }`}
+              >
+                <Rows3 className="w-4 h-4" />
+                Pill Buttons
+              </button>
+              <span className="text-xs text-muted-foreground ml-2">
+                Changes apply instantly on the homepage
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
