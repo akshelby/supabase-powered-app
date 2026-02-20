@@ -318,12 +318,13 @@ export function PremiumCollection() {
                   <Link
                     to={`/products/${product.slug || product.id}`}
                     className={cn(
-                      'block w-full h-full rounded-xl overflow-hidden shadow-lg',
+                      'block w-full h-full rounded-xl overflow-hidden shadow-xl',
                     )}
+                    style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
                     onClick={(e) => { if (isDraggingRef.current) e.preventDefault(); }}
                     data-testid={`collection-card-${product.id}`}
                   >
-                    <div className="relative w-full h-full">
+                    <div className="relative w-full h-full bg-card">
                       <img
                         src={getProductImage(product)}
                         alt={product.name}
@@ -331,13 +332,13 @@ export function PremiumCollection() {
                         draggable={false}
                         onError={(e) => { (e.target as HTMLImageElement).src = blackGraniteImg; }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
                       <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4">
-                        <h3 className="text-white text-xs sm:text-base font-semibold leading-tight">
+                        <h3 className="text-white text-xs sm:text-base font-semibold leading-tight drop-shadow">
                           {product.name}
                         </h3>
                         {product.price && (
-                          <p className="text-white/80 text-[10px] sm:text-sm mt-0.5 sm:mt-1">
+                          <p className="text-white/90 text-[10px] sm:text-sm mt-0.5 sm:mt-1 drop-shadow">
                             ₹{Number(product.price).toLocaleString('en-IN')}
                           </p>
                         )}
