@@ -137,8 +137,9 @@
 
 /* ===== Category icon circles ===== */
 /* No background on regular icons; prominent ones keep their coloured bg via Tailwind classes */
-.category-icon-circle:not(.category-icon-prominent) {
-  background: transparent !important;
+/* background is set via inline style on non-prominent icons (soft white) */
+.category-icon-prominent {
+  /* prominent icons keep their Tailwind gradient bg */
 }
 
 
