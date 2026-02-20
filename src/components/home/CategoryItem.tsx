@@ -46,14 +46,14 @@ export function CategoryItem({
           transition: { duration: 2.4, repeat: Infinity, repeatType: 'reverse' as const, ease: 'easeInOut' },
         } : {})}
       >
-        {/* Comet arc ring — spins around the icon */}
+        {/* Comet arc ring — spins around the icon with gap */}
         <div
           className="comet-ring"
           style={{
-            width: 'calc(100% + 6px)',
-            height: 'calc(100% + 6px)',
-            top: '-3px',
-            left: '-3px',
+            width: 'calc(100% + 18px)',
+            height: 'calc(100% + 18px)',
+            top: '-9px',
+            left: '-9px',
           }}
         />
 
@@ -61,10 +61,10 @@ export function CategoryItem({
         <div
           className="absolute rounded-full"
           style={{
-            width: 'calc(100% + 1px)',
-            height: 'calc(100% + 1px)',
-            top: '-0.5px',
-            left: '-0.5px',
+            width: 'calc(100% + 12px)',
+            height: 'calc(100% + 12px)',
+            top: '-6px',
+            left: '-6px',
             boxShadow: '0 0 0 2.5px var(--background, #fff) inset',
           }}
         />
