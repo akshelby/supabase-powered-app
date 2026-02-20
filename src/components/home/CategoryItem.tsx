@@ -37,18 +37,20 @@ export function CategoryItem({
   const bg = prominent ? prominentBg : bgColor;
   const ringColor = arcColor || '#ef4444';
 
-  // Raised (resting) shadow — light from top-left, dark bottom-right
+  // Raised (resting) — strong lift with top highlight and bottom shadow
   const raisedShadow = `
-    4px 6px 12px rgba(0,0,0,0.22),
-    -2px -2px 6px rgba(255,255,255,0.7),
-    inset 0 1px 0 rgba(255,255,255,0.5)
+    0 6px 18px rgba(0,0,0,0.18),
+    0 2px 6px rgba(0,0,0,0.12),
+    -2px -3px 8px rgba(255,255,255,0.85),
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -1px 0 rgba(0,0,0,0.06)
   `;
-  // Pressed shadow — inset, flat look
+  // Pressed — sinks inward
   const pressedShadow = `
-    1px 2px 4px rgba(0,0,0,0.18),
-    -1px -1px 2px rgba(255,255,255,0.5),
-    inset 2px 3px 8px rgba(0,0,0,0.18),
-    inset -1px -1px 4px rgba(255,255,255,0.4)
+    0 1px 3px rgba(0,0,0,0.14),
+    -1px -1px 3px rgba(255,255,255,0.6),
+    inset 3px 4px 10px rgba(0,0,0,0.16),
+    inset -1px -2px 5px rgba(255,255,255,0.5)
   `;
 
   const content = (
@@ -87,9 +89,19 @@ export function CategoryItem({
             'transition-[box-shadow] duration-100',
             prominent && bg,
           )}
-          style={{ zIndex: 3, boxShadow: raisedShadow }}
+          style={{
+            zIndex: 3,
+            boxShadow: raisedShadow,
+            // Soft white base for non-prominent so shadows read clearly
+            background: prominent ? undefined : 'hsl(0 0% 97%)',
+          }}
           whileTap={{ boxShadow: pressedShadow } as never}
         >
+          {/* Inner top highlight */}
+          {!prominent && (
+            <div className="absolute inset-0 rounded-full pointer-events-none"
+              style={{ background: 'linear-gradient(160deg, rgba(255,255,255,0.9) 0%, transparent 55%)' }} />
+          )}
           <Icon
             className={cn(
               'w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 relative z-10',
