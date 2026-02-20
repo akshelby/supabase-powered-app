@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { CategoryItem } from './CategoryItem';
+import { CategoryItemPill } from './CategoryItemPill';
 import { BhrundhavanIcon } from './BhrundhavanIcon';
 import { ContactNumbersDialog } from './ContactNumbersDialog';
+import { useCategoryStyle } from '@/hooks/useCategoryStyle';
 import {
   KitchenSlabIcon,
   VanityTopIcon,
@@ -177,10 +179,13 @@ const containerVariants = {
 export function CategoriesSection() {
   const { t } = useTranslation();
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
+  const { style } = useCategoryStyle();
 
   const openChatWidget = () => {
     window.dispatchEvent(new CustomEvent('open-chat-widget'));
   };
+
+  const isPill = style === 'pill';
 
   return (
     <section className="py-8 sm:py-10 md:py-14 bg-background" data-testid="categories-section">
@@ -205,31 +210,44 @@ export function CategoriesSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-50px' }}
-          className="grid grid-cols-4 sm:flex sm:flex-wrap sm:justify-center gap-6 sm:gap-8 md:gap-10 lg:gap-12"
+          className={isPill
+            ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4'
+            : 'grid grid-cols-4 sm:flex sm:flex-wrap sm:justify-center gap-6 sm:gap-8 md:gap-10 lg:gap-12'
+          }
         >
-          {categories.map((category, index) => (
-            <CategoryItem
-              key={category.id}
-              id={category.id}
-              name={t(category.nameKey)}
-              icon={category.icon}
-              link={category.link}
-              description={t(category.descriptionKey)}
-              iconColor={category.iconColor}
-              bgColor={category.bgColor}
-              borderColor={category.borderColor}
-              glowColor={category.glowColor}
-              arcColor={category.arcColor}
-              prominent={category.prominent}
-              prominentBg={category.prominentBg}
-              index={index}
-              onClick={
+          {categories.map((category, index) => {
+            const commonProps = {
+              key: category.id,
+              id: category.id,
+              name: t(category.nameKey),
+              icon: category.icon,
+              link: category.link,
+              description: t(category.descriptionKey),
+              arcColor: category.arcColor,
+              prominent: category.prominent,
+              index,
+              onClick:
                 category.id === 'contact-us' ? () => setContactDialogOpen(true) :
                 category.id === 'chat-support' ? openChatWidget :
-                undefined
-              }
-            />
-          ))}
+                undefined,
+            };
+
+            return isPill ? (
+              <CategoryItemPill
+                {...commonProps}
+                prominentBg={category.prominentBg}
+              />
+            ) : (
+              <CategoryItem
+                {...commonProps}
+                iconColor={category.iconColor}
+                bgColor={category.bgColor}
+                borderColor={category.borderColor}
+                glowColor={category.glowColor}
+                prominentBg={category.prominentBg}
+              />
+            );
+          })}
         </motion.div>
       </div>
 
