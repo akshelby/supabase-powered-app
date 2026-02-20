@@ -88,6 +88,7 @@ export function CategoryItem({
         <div
           className={cn(
             'category-icon-circle',
+            prominent ? 'category-icon-prominent' : '',
             'relative w-14 h-14 sm:w-16 sm:h-16 md:w-[72px] md:h-[72px]',
             'rounded-full flex items-center justify-center',
             'transition-all duration-300',
