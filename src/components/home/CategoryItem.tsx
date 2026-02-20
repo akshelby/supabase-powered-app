@@ -41,17 +41,32 @@ export function CategoryItem({
     <div className="flex flex-col items-center gap-2.5 sm:gap-3">
       <motion.div
         className="relative"
-        whileHover={{ y: -6, scale: 1.1 }}
-        whileTap={{ scale: 0.92 }}
+        whileHover={{ y: -5, scale: 1.08 }}
+        whileTap={{ scale: 0.93 }}
         transition={{ type: 'spring', stiffness: 420, damping: 18 }}
         {...(prominent ? {
           animate: { scale: [1, 1.06, 1] },
           transition: { duration: 2.4, repeat: Infinity, repeatType: 'reverse' as const, ease: 'easeInOut' },
         } : {})}
       >
+        {/* Glow / shadow disc behind the icon */}
+        <div
+          className="absolute rounded-full transition-all duration-300 group-hover:opacity-100"
+          style={{
+            width: 'calc(100% + 6px)',
+            height: 'calc(100% + 6px)',
+            top: '-3px',
+            left: '-3px',
+            background: ringColor,
+            opacity: 0.18,
+            filter: 'blur(8px)',
+            zIndex: 0,
+          }}
+        />
+
         {/* Static circle ring */}
         <div
-          className="absolute rounded-full"
+          className="absolute rounded-full transition-all duration-300 group-hover:opacity-100"
           style={{
             width: 'calc(100% + 14px)',
             height: 'calc(100% + 14px)',
@@ -70,10 +85,13 @@ export function CategoryItem({
             prominent ? 'category-icon-prominent' : '',
             'relative w-14 h-14 sm:w-16 sm:h-16 md:w-[72px] md:h-[72px]',
             'rounded-full flex items-center justify-center',
-            'transition-all duration-300',
+            'transition-all duration-300 group-hover:scale-105',
             prominent && bg,
           )}
-          style={{ zIndex: 3 }}
+          style={{
+            zIndex: 3,
+            boxShadow: `0 4px 16px 0 ${ringColor}55, 0 2px 6px 0 rgba(0,0,0,0.10)`,
+          }}
         >
           <Icon
             className={cn(
