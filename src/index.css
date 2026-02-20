@@ -136,6 +136,12 @@
 /* ===== End CTA Ribbon Buttons ===== */
 
 /* ===== Comet arc ring animation ===== */
+/* Dark mode: remove icon backgrounds, show only comet arc */
+.dark .category-icon-circle {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
 @keyframes comet-spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
