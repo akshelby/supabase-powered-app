@@ -17,6 +17,7 @@ interface CategoryItemProps {
   prominent?: boolean;
   prominentBg?: string;
   glowColor?: string;
+  arcColor?: string;
   onClick?: () => void;
 }
 
@@ -28,15 +29,18 @@ export function CategoryItem({
   prominent,
   prominentBg,
   glowColor,
+  arcColor,
   index,
   onClick,
 }: CategoryItemProps) {
   const isExternal = link.startsWith('tel:') || link.startsWith('http') || link.startsWith('mailto:');
 
   const bg = prominent ? prominentBg : bgColor;
-
-  // Spread starting angles evenly so no two icons look the same
   const animDelay = `-${((index * 0.47) % 2).toFixed(2)}s`;
+
+  // Build the conic-gradient using the chosen arc color
+  const r = arcColor || '#ef4444';
+  const cometGradient = `conic-gradient(from 0deg, transparent 0%, transparent 70%, ${r}33 80%, ${r}d9 92%, ${r} 97%, ${r} 100%)`;
 
   const content = (
     <div className="flex flex-col items-center gap-2.5 sm:gap-3">
@@ -59,6 +63,7 @@ export function CategoryItem({
             top: '-14px',
             left: '-14px',
             animationDelay: animDelay,
+            background: cometGradient,
           }}
         />
 
