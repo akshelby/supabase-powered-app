@@ -37,61 +37,58 @@ export function CategoryItem({
   const bg = prominent ? prominentBg : bgColor;
   const ringColor = arcColor || '#ef4444';
 
+  // Raised (resting) shadow — light from top-left, dark bottom-right
+  const raisedShadow = `
+    4px 6px 12px rgba(0,0,0,0.22),
+    -2px -2px 6px rgba(255,255,255,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.5)
+  `;
+  // Pressed shadow — inset, flat look
+  const pressedShadow = `
+    1px 2px 4px rgba(0,0,0,0.18),
+    -1px -1px 2px rgba(255,255,255,0.5),
+    inset 2px 3px 8px rgba(0,0,0,0.18),
+    inset -1px -1px 4px rgba(255,255,255,0.4)
+  `;
+
   const content = (
     <div className="flex flex-col items-center gap-2.5 sm:gap-3">
       <motion.div
-        className="relative"
-        whileHover={{ y: -5, scale: 1.08 }}
-        whileTap={{ scale: 0.93 }}
+        className="relative cursor-pointer"
+        whileHover={{ y: -4, scale: 1.06 }}
+        whileTap={{ y: 1, scale: 0.94 }}
         transition={{ type: 'spring', stiffness: 420, damping: 18 }}
         {...(prominent ? {
-          animate: { scale: [1, 1.06, 1] },
+          animate: { scale: [1, 1.05, 1] },
           transition: { duration: 2.4, repeat: Infinity, repeatType: 'reverse' as const, ease: 'easeInOut' },
         } : {})}
       >
-        {/* Glow / shadow disc behind the icon */}
+        {/* Circle ring */}
         <div
-          className="absolute rounded-full transition-all duration-300 group-hover:opacity-100"
-          style={{
-            width: 'calc(100% + 6px)',
-            height: 'calc(100% + 6px)',
-            top: '-3px',
-            left: '-3px',
-            background: ringColor,
-            opacity: 0.18,
-            filter: 'blur(8px)',
-            zIndex: 0,
-          }}
-        />
-
-        {/* Static circle ring */}
-        <div
-          className="absolute rounded-full transition-all duration-300 group-hover:opacity-100"
+          className="absolute rounded-full"
           style={{
             width: 'calc(100% + 14px)',
             height: 'calc(100% + 14px)',
             top: '-7px',
             left: '-7px',
             border: `2.5px solid ${ringColor}`,
-            opacity: 0.85,
+            opacity: 0.8,
             zIndex: 0,
           }}
         />
 
-        {/* Icon circle */}
-        <div
+        {/* Push-button icon circle */}
+        <motion.div
           className={cn(
             'category-icon-circle',
             prominent ? 'category-icon-prominent' : '',
             'relative w-14 h-14 sm:w-16 sm:h-16 md:w-[72px] md:h-[72px]',
             'rounded-full flex items-center justify-center',
-            'transition-all duration-300 group-hover:scale-105',
+            'transition-[box-shadow] duration-100',
             prominent && bg,
           )}
-          style={{
-            zIndex: 3,
-            boxShadow: `0 4px 14px 0 rgba(0,0,0,0.22), 0 1px 4px 0 rgba(0,0,0,0.12)`,
-          }}
+          style={{ zIndex: 3, boxShadow: raisedShadow }}
+          whileTap={{ boxShadow: pressedShadow } as never}
         >
           <Icon
             className={cn(
@@ -100,7 +97,7 @@ export function CategoryItem({
             )}
             strokeWidth={1.75}
           />
-        </div>
+        </motion.div>
       </motion.div>
 
       <span
