@@ -139,7 +139,6 @@
 /* No background on regular icons; prominent ones keep their coloured bg via Tailwind classes */
 .category-icon-circle:not(.category-icon-prominent) {
   background: transparent !important;
-  box-shadow: none !important;
 }
 
 
