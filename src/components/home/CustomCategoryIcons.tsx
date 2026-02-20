@@ -87,15 +87,14 @@ export function ContactIcon({ className, ...props }: IconProps) {
   );
 }
 
-// Store front for offline stores
+// Map pin for offline stores
 export function OfflineStoreIcon({ className, ...props }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
-      <path d="M3 9l1.5-5h15L21 9" />
-      <path d="M3 9h18v1a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0v-1z" />
-      <rect x="8" y="14" width="8" height="7" rx="0.5" />
-      <line x1="3" y1="21" x2="21" y2="21" />
-      <line x1="12" y1="14" x2="12" y2="21" />
+      {/* Pin body */}
+      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+      {/* Inner circle */}
+      <circle cx="12" cy="9" r="2.5" />
     </svg>
   );
 }
