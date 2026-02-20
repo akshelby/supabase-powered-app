@@ -136,8 +136,8 @@
 /* ===== End CTA Ribbon Buttons ===== */
 
 /* ===== Comet arc ring animation ===== */
-/* Light mode: no background on regular icon circles */
-.category-icon-circle {
+/* Light mode: no background on regular icon circles (prominent ones keep their bg) */
+.category-icon-circle:not(.category-icon-prominent) {
   background: transparent !important;
   box-shadow: none !important;
 }
